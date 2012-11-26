@@ -1,0 +1,33 @@
+{literal}
+<script type="text/javascript">
+	document.onLoad = pi_ratepay_onLoad();
+
+
+	function pi_ratepay_onLoad() {
+		var paymentRadioButtons = document.getElementsByName('payment');
+	    for (var i = 0; i < paymentRadioButtons.length; i++) {
+	    	paymentRadioButtons[i].setAttribute('onClick','checkPayment();');
+	    }
+	    if(paymentRadioButtons.length == 1) {
+	    	paymentRadioButtons[0].checked = true;
+	    }
+	    checkPayment();
+	}
+
+	function checkPayment() {
+		var paymentRadioButtons = document.getElementsByName('payment');
+	    for (var i = 0; i < paymentRadioButtons.length; i++) {
+		    if(paymentRadioButtons[i].checked == true && paymentRadioButtons[i].value == 'pi_ratepay_rechnung') {
+		    	document.getElementById('rpAgbContainer').style.display = 'none';
+		    	document.getElementsByName('conditions')[0].checked = true;
+		    } else if(paymentRadioButtons[i].checked == true && paymentRadioButtons[i].value == 'pi_ratepay_rate'){
+		    	document.getElementById('rpAgbContainer').style.display = 'none';
+		    	document.getElementsByName('conditions')[0].checked = true;
+		    } else if(paymentRadioButtons[i].checked == true && (paymentRadioButtons[i].value != 'pi_ratepay_rate' || paymentRadioButtons[i].value != 'pi_ratepay_rechnung')){
+		    	document.getElementById('rpAgbContainer').style.display = '';
+		    	document.getElementsByName('conditions')[0].checked = false;
+		    }
+	    }
+	}
+</script>
+{/literal}

@@ -1,0 +1,26 @@
+***********************************************************
+**********| Version 1.0.1 - Released 2012-05-30 |**********
+***********************************************************
+
+* Fix wrong encoded string in the requests
+
+***********************************************************
+**********| Version 1.0.0 - Released 2012-01-05 |**********
+***********************************************************
+ - New payment method RatePAY Rate
+ - Shopping basket amount over 1000 euro will now send correctly
+ - Taxes for shipping will now delivered
+ - Taxes for coupons will now delivered
+
+***********************************************************
+**********| Version 0.8.4 - Released 2011-12-02 |**********
+***********************************************************
+
+- Fixed Voucher Bugs
+- Fixed Cancellation Bug
+- Added Loggingcolumns
+- Changed Logging Functionality
+- Fixed Descriptor Bug
+- Fixed Datebug on Invoice
+
+
