@@ -1,0 +1,112 @@
+
+<!--
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * @category  PayIntelligent
+ * @package   ratepay
+ * @copyright (C) 2012 PayIntelligent GmbH  <http://www.payintelligent.de/>
+ * @license   GPLv2
+ */ 
+-->
+
+<style>
+    {literal}
+    .piRpCheckbox
+    {
+        vertical-align: top;
+    }
+    .piRpConditionContainer
+    {
+        margin:10px;
+        color:#2F2F2F;
+        vertical-align: top;
+    }
+    .piRpConditionLink 
+    {
+        text-decoration: underline;
+        color: #1E7EC8;
+    }
+    {/literal}
+</style>
+<div class="piRpConditionContainer">
+    <form action="{$backLink}" name="terms" method="POST" id="terms">
+        <table>
+            <tr>
+                <td colspan="2">
+                    <img src="images/ratepay_rechnung_checkout_logo.png" alt="RatePAY Rechnung"/>
+                    &nbsp;
+                    <br/>
+                    <br/>
+                    <b>
+                        <span style="color:red;">{$smarty.const.TITLE}</span> 
+                        {$RATEPAY_INFO_1}
+                    </b>
+                    <br/>
+                    <br/>
+                    {$RATEPAY_INFO_2}
+                    <b>{$RATEPAY_INFO_3}{$min} EUR </b>
+                    und 
+                    <b>{$RATEPAY_INFO_4}{$max} EUR</b>
+                    <br/>
+                    {$RATEPAY_INFO_5}
+                    <br/>
+                    <br/>
+                    <small>
+                        {$RATEPAY_INFO_6}
+                    </small>
+                </td>
+            </tr>
+            <tr>
+                <td colspan='2'>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan='2'>
+                    <table>
+                        <tr>
+                            <td class="piRpCheckbox">
+                                <input id="conditions" type="checkbox" name="conditions" value="conditions"/>
+                            </td>
+                            <td>
+                                {$RATEPAY_INFO_7}
+                                <a href="{$merchantGtcUrl}" target="_blank" class="piRpConditionLink">
+                                    {$RATEPAY_INFO_8}
+                                </a>
+                                {$RATEPAY_INFO_9}
+                                <a href="{$ratepayPrivacyUrl}" target="_blank" class="piRpConditionLink">
+                                    {$RATEPAY_INFO_10}
+                                </a>
+                                {$RATEPAY_INFO_11}
+                                {if $merchantPrivacyUrl}
+                                {$RATEPAY_INFO_12}
+                                <a href="{$merchantPrivacyUrl}" target="_blank" class="piRpConditionLink">
+                                    {$RATEPAY_INFO_13}
+                                </a>.
+                                {/if}
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:left;">
+                    <a href="{$backLink}">
+                        <img src="templates/xtc5/buttons/german/button_back.gif" alt="Zur&uuml;ck"/>
+                    </a>
+                </td>
+                <td style="text-align:right;">
+                    <input type="submit" value="" style="width:127px; height: 27px; background: transparent url(templates/xtc5/buttons/german/button_continue.gif)" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
