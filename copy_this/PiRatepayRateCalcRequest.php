@@ -129,7 +129,7 @@ if ($pi_calculator->getErrorMsg() != '') {
                     <div class="piRpMouseoverInfo" id="piRpMouseoverInfoDebitRate"><?php echo $pi_lang_mouseover_debit_rate; ?></div>
                 </div>
             </td>
-            <td><?php echo $pi_resultArray['monthlyDebitInterest']; ?>%</td>
+            <td><?php echo $pi_resultArray['interestRate']; ?>%</td>
             <td></td>
         </tr>
 

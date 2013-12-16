@@ -129,8 +129,8 @@ $smarty->assign('RATEPAY_INFO_11', RATEPAY_RECHNUNG_INFO_11);
 $smarty->assign('RATEPAY_INFO_12', RATEPAY_RECHNUNG_INFO_12);
 $smarty->assign('RATEPAY_INFO_13', RATEPAY_RECHNUNG_INFO_13);
 $smarty->assign('RATEPAY_AGB_ERROR', RATEPAY_RECHNUNG_AGB_ERROR);
-$smarty->assign('backLink', xtc_href_link('checkout_confirmation.php'));
-$smarty->assign('forwardLink', xtc_href_link('ratepay_rate_checkout_details.php'));
+$smarty->assign('backLink', xtc_href_link('checkout_payment.php'));
+$smarty->assign('forwardLink', xtc_href_link('checkout_confirmation.php'));
 
 $smarty->caching = 0;
 $main_content = $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_rechnung_checkout_terms.html');
