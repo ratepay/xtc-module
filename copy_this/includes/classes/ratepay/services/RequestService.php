@@ -22,7 +22,7 @@ require_once(dirname(__FILE__) . '/../../../classes/ratepay/services/Communicati
 /**
  * RequestService class, build the xml requests and parse the responses
  */
-class RequestService
+class rpRequestService
 {
 
     /**
@@ -300,7 +300,7 @@ class RequestService
     /**
      * Validate if HeadInfo instance is initialized
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _validateHeadInfo()
     {
@@ -313,7 +313,7 @@ class RequestService
     /**
      * Validate if CustomerInfo instance is initialized
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _validateCustomerInfo()
     {
@@ -327,7 +327,7 @@ class RequestService
     /**
      * Validate if BasketInfo instance is initialized
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _validateBasketInfo()
     {
@@ -340,7 +340,7 @@ class RequestService
 
     /**
      * Validate if PaymentInfo instance is initialized
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _validatePaymentInfo()
     {
@@ -354,7 +354,7 @@ class RequestService
     /**
      * Validate if CalculationInfo instance is initialized
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _validateCalculationInfo()
     {
@@ -467,7 +467,7 @@ class RequestService
     /**
      * Sets the head tag with all informations based on the request type.
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRequestHead()
     {
@@ -514,7 +514,7 @@ class RequestService
     /**
      * Sets the customer device to the head tag of the request
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRatepayHeadCustomerDevice()
     {
@@ -538,7 +538,7 @@ class RequestService
     /**
      * Sets the content tag of the request
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRequestContent()
     {
@@ -559,7 +559,7 @@ class RequestService
     /**
      * Sets the customer in the content tag of the request.
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRatepayContentCustomer()
     {
@@ -608,12 +608,22 @@ class RequestService
         $shippingAddress->addCDataChild('city', $customerInfo['shipping']['city']);
         $shippingAddress->addChild('country-code', strtoupper($customerInfo['shipping']['countryId']));
 
-        if (!empty($customerInfo['bankAccount']['owner'])) {
+        if (!empty($customerInfo['bankAccount']['accountNumber'])) {
             $bankData = $customer->addChild('bank-account');
-            $bankData->addChild('owner', $customerInfo['bankAccount']['owner']);
-            $bankData->addChild('bank-account-number', $customerInfo['bankAccount']['accountNumber']);
-            $bankData->addChild('bank-code', $customerInfo['bankAccount']['bankCode']);
+            $bankCodeKey = 'bic-swift';
+            $accountNumberKey = 'iban';
+
+            if (is_numeric(strtoupper(substr($customerInfo['bankAccount']['accountNumber'], 0, 2)))) {
+                $accountNumberKey = 'bank-account-number';
+                $bankCodeKey = 'bank-code';
+            }
+            
+            $bankData->addCDataChild('owner', $customerInfo['bankAccount']['owner']);
             $bankData->addChild('bank-name', $customerInfo['bankAccount']['bankName']);
+            $bankData->addChild($accountNumberKey, $customerInfo['bankAccount']['accountNumber']);
+            if (!empty($customerInfo['bankAccount']['bankAccount'])) {
+                $bankData->addCDataChild($bankCodeKey, $customerInfo['bankAccount']['bankAccount']);
+            }
         }
 
         $customer->addChild('nationality', $customerInfo['nationality']);
@@ -629,7 +639,7 @@ class RequestService
     /**
      * Sets the shopping basket in the content tag of the request.
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRatepayContentBasket()
     {
@@ -642,8 +652,8 @@ class RequestService
 
         foreach ($basketInfo['items'] as $itemInfoObject) {
             $itemInfo = $itemInfoObject->getData();
-            $item = $items->addCDataChild('item', Data::removeSpecialChars($itemInfo['articleName']));
-            $item->addAttribute('article-number', Data::removeSpecialChars($itemInfo['articleNumber']));
+            $item = $items->addCDataChild('item', rpData::removeSpecialChars($itemInfo['articleName']));
+            $item->addAttribute('article-number', rpData::removeSpecialChars($itemInfo['articleNumber']));
             $item->addAttribute('quantity', number_format($itemInfo['quantity'], 0, '.', ''));
             $item->addAttribute('unit-price', number_format(round($itemInfo['unitPrice'], 2), 2, ".", ""));
             $item->addAttribute('total-price', number_format(round($itemInfo['totalPrice'], 2), 2, ".", ""));
@@ -656,7 +666,7 @@ class RequestService
     /**
      * Set the payment data in the content tag of the request.
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRatepayContentPayment()
     {
@@ -683,7 +693,7 @@ class RequestService
     /**
      * Set the installment calculation tag of the request.
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     private function _setRatepayContentCalculation()
     {
@@ -715,7 +725,7 @@ class RequestService
      */
     private function _sendXmlRequest()
     {
-        $client = new CommunicationService();
+        $client = new rpCommunicationService();
         $response = $client->send($this->_sandbox, $this->getRequest()->asXML());
         $this->_response = new SimpleXMLElement($response);
         return $this->_response;
@@ -724,14 +734,14 @@ class RequestService
     /**
      * Create SimpleXML object for request creation.
      * 
-     * @return RequestService
+     * @return rpRequestService
      */
     public function constructXml()
     {
         require_once(dirname(__FILE__) . '/../../../classes/ratepay/helpers/SimpleXmlExtended.php');
         $xmlString = '<request version="1.0" xmlns="urn://www.ratepay.com/payment/1_0"></request>';
         $this->_request = null;
-        $this->_request = new SimpleXmlExtended($xmlString);
+        $this->_request = new rpSimpleXmlExtended($xmlString);
 
         return $this;
     }

@@ -25,7 +25,7 @@ require_once('Loader.php');
  * Data helper, contians all helper methods
  * (DB operations, session access, access on globals
  */
-class Data
+class rpData
 {
 
     /**
@@ -36,7 +36,7 @@ class Data
      */
     public static function getCredentials($payment)
     {
-        $payment = Loader::getRatepayPayment($payment);
+        $payment = rpLoader::getRatepayPayment($payment);
         return array('profileId' => $payment->profileId, 'securityCode' => $payment->securityCode);
     }
 
@@ -82,7 +82,7 @@ class Data
     {
         $price = empty($post['voucherAmountKomma']) ? floatval($post['voucherAmount']) : floatval($post['voucherAmount'] . '.' . $post['voucherAmountKomma']);
         $credit = array();
-        $credit['id'] = 'pi-Merchant-Voucher-' . Db::getLastCreditId($post['order_number']);
+        $credit['id'] = 'pi-Merchant-Voucher-' . rpDb::getLastCreditId($post['order_number']);
         $credit['name'] = utf8_decode('Händler Gutschrift');
         $credit['qty'] = 1;
         $credit['tax'] = 0;
@@ -182,7 +182,7 @@ class Data
     public static function getShippingData(order $order)
     {
         $shipping = array();
-        $session = Session::getSessionEntry('piRP');
+        $session = rpSession::getSessionEntry('piRP');
         if (array_key_exists('shipping_cost', $order->info) && $order->info['shipping_cost'] > 0) {
             $shipping['qty'] = 1;
             $shipping['name'] = $order->info['shipping_method'];
@@ -190,9 +190,9 @@ class Data
             $shipping['unitPrice'] = $order->info['shipping_cost'];
             $shipping['totalPrice'] = $order->info['shipping_cost'];
             $shipping['tax'] = self::getShippingTaxAmount($order);
-            Session::setRpSessionEntry('shipping', $shipping);
+            rpSession::setRpSessionEntry('shipping', $shipping);
         } else if (array_key_exists('shipping', $session)) {
-            $shipping = Session::getRpSessionEntry('shipping');
+            $shipping = rpSession::getRpSessionEntry('shipping');
         }
 
         return $shipping;
@@ -209,14 +209,10 @@ class Data
     public static function getPaymentAmount(order $order, $orderId = null, array $post = array())
     {
         $amount = self::getBasketAmount($order, $orderId, $post);
-        if ($order->info['payment_method'] == 'ratepay_rate') {
-            if (is_null($orderId)) {
-                $amount = Session::getRpSessionEntry('ratepay_rate_total_amount');
-            } else {
-                $details = Db::getRatepayRateDetails($orderId);
-                $amount = $details['total_amount'];
-            }
+        if ($order->info['payment_method'] === 'ratepay_rate' && is_null($orderId)) {
+            $amount = rpSession::getRpSessionEntry('ratepay_rate_total_amount');
         }
+        
         return $amount;
     }
 
@@ -240,7 +236,7 @@ class Data
 
         if (!is_null($orderId)) {
             $amount = 0;
-            $items = Db::getItemsByTable($orderId, $post);
+            $items = rpDb::getItemsByTable($orderId, $post);
             foreach ($items as $item) {
                 $amount += $item['totalPrice'] + $item['tax'];
             }
@@ -258,7 +254,7 @@ class Data
     public static function getSubtotal($orderId)
     {
         $amount = 0;
-        $items = Db::getItemsByTable($orderId);
+        $items = rpDb::getItemsByTable($orderId);
         foreach ($items as $item) {
             if ($item['id'] != 'DISCOUNT' && $item['id'] != 'SHIPPING' && substr($item['id'], 0, 19) != 'pi-Merchant-Voucher') {
                 $amount += $item['totalPrice'] + $item['tax'];
@@ -278,7 +274,7 @@ class Data
     {
 
         $amount = 0;
-        $items = Db::getItemsByTable($orderId);
+        $items = rpDb::getItemsByTable($orderId);
         foreach ($items as $item) {
             $amount += $item['tax'];
         }
@@ -349,7 +345,7 @@ class Data
      */
     public static function getDiscounts()
     {
-        $discounts = Session::getRpSessionEntry('coupon');
+        $discounts = rpSession::getRpSessionEntry('coupon');
 
         if (!is_null($discounts)) {
             return $discounts;
@@ -408,7 +404,7 @@ class Data
      */
     public static function isRatepayPayment($code)
     {
-        $payments = array('ratepay_rate', 'ratepay_rechnung');
+        $payments = array('ratepay_rate', 'ratepay_rechnung', 'ratepay_sepa');
         return in_array($code, $payments);
     }
 
@@ -423,7 +419,8 @@ class Data
         if (self::isRatepayPayment($code)) {
             $methods = array(
                 'ratepay_rechnung' => 'invoice',
-                'ratepay_rate' => 'installment'
+                'ratepay_rate' => 'installment',
+                'ratepay_sepa' => 'elv'
             );
             return $methods[$code];
         }
@@ -436,7 +433,7 @@ class Data
      */
     public static function disableRatepay()
     {
-        Session::setRpSessionEntry('disabled', true);
+        rpSession::setRpSessionEntry('disabled', true);
     }
 
     /**
@@ -446,7 +443,7 @@ class Data
      */
     public static function isRatepayAvailable()
     {
-        return !Session::getRpSessionEntry('disabled');
+        return !rpSession::getRpSessionEntry('disabled');
     }
 
     /**
@@ -491,8 +488,8 @@ class Data
     {
         $logicals = array('desc' => 'asc', 'asc' => 'desc');
         $logical = 'desc';
-        if (Globals::hasParam('logical')) {
-            $logical = $logicals[Globals::getParam('logical')];
+        if (rpGlobals::hasParam('logical')) {
+            $logical = $logicals[rpGlobals::getParam('logical')];
         }
         return $logical;
     }
@@ -539,7 +536,7 @@ class Data
      */
     public static function isFullDeliver($post, $orderId)
     {
-        foreach (Db::getRpItems($orderId) as $item) {
+        foreach (rpDb::getRpItems($orderId) as $item) {
             if (!($item['ordered'] == $post[$item['id']]['toShip'])) {
                 return false;
             }
@@ -557,7 +554,7 @@ class Data
      */
     public static function isFullCancel($post, $orderId)
     {
-        foreach (Db::getRpItems($orderId) as $item) {
+        foreach (rpDb::getRpItems($orderId) as $item) {
             if (!($item['ordered'] == $post[$item['id']]['toCancel'])) {
                 return false;
             }
@@ -575,7 +572,7 @@ class Data
      */
     public static function isFullReturn($post, $orderId)
     {
-        foreach (Db::getRpItems($orderId) as $item) {
+        foreach (rpDb::getRpItems($orderId) as $item) {
             if (!($item['ordered'] == $post[$item['id']]['toRefund'])) {
                 return false;
             }

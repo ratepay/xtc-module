@@ -91,7 +91,7 @@ class pi_ratepay_xml_service
     {
         $xmlString = '<request version="1.0" xmlns="urn://www.ratepay.com/payment/1_0"></request>';
         require_once('SimpleXMLExtended.php');
-        $xml = new SimpleXMLExtended($xmlString);
+        $xml = new rpSimpleXmlExtended($xmlString);
         return $xml;
     }
 

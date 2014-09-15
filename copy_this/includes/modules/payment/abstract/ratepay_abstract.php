@@ -34,20 +34,67 @@ class ratepay_abstract
     public $code = 'ratepay_abstract';
     
     /**
-     * Min order amount
+     * Minimal order amount
      * 
      * @var float
      */
-    public $min;
+    public $minDe;
     
     /**
-     * Max order amount
+     * Maximal order amount
      * 
      * @var float
      */
-    public $max;
-
+    public $maxDe;
+    
     /**
+     * Minimal order amount
+     * 
+     * @var float
+     */
+    public $minAt;
+    
+    /**
+     * Maximal order amount
+     * 
+     * @var float
+     */
+    public $maxAt;
+    
+    /**
+     * b2b de flag
+     * @var boolan
+     */
+    public $b2bDe = false;
+    
+    /**
+     * b2b at flag
+     * @var boolan
+     */
+    public $b2bAt = false;
+    
+    public $error = array();
+    
+    protected function _setCredentials($country)
+    {
+        switch (strtoupper($country)) {
+            case 'AT':
+                $this->profileId = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_PROFILE_ID_AT');
+                $this->securityCode = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_SECURITY_CODE_AT');
+                break;
+            case 'DE':
+                $this->profileId = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_PROFILE_ID_DE');
+                $this->securityCode = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_SECURITY_CODE_DE');
+                break;
+            default:
+                $this->profileId = null;
+                $this->securityCode = null;
+                break;
+        }
+    }
+
+
+        /**
      * Retrieve payment selection array
      * 
      * @return array
@@ -66,15 +113,31 @@ class ratepay_abstract
             $display['fields'] = $neededFields;
         }
         
-        if ($order->billing['country']['iso_code_2'] != 'DE') {
+        $dob = rpDb::getCustomersDob(null, rpSession::getSessionEntry('customer_id'));
+        
+        if ($dob !== '0000-00-00' && !$this->_isAdult($dob)) {
             $display = null;
         }
         
-        if (!Data::isRatepayAvailable()) {
+        if ($order->billing['country']['iso_code_2'] != 'DE' && $order->billing['country']['iso_code_2'] != 'AT') {
             $display = null;
         }
         
-        if ((floatval($order->info['total']) < floatval($this->min)) || (floatval($order->info['total']) > floatval($this->max))) {
+        if (!rpData::isRatepayAvailable()) {
+            $display = null;
+        }
+        
+        $minVarName = 'min' . ucfirst(strtolower($order->billing['country']['iso_code_2']));
+        $maxVarName = 'max' . ucfirst(strtolower($order->billing['country']['iso_code_2']));
+        
+        if ((floatval($order->info['total']) < floatval($this->$minVarName)) || (floatval($order->info['total']) > floatval($this->$maxVarName))) {
+            $display = null;
+        }
+        
+        $vatId = rpDb::getCustomersVatId(null, rpSession::getSessionEntry('customer_id'));
+        $b2bVarName = 'b2b' .  ucfirst(strtolower($order->billing['country']['iso_code_2']));
+        
+        if (!$this->$b2bVarName && (!empty($order->customer['company']) || !empty($order->billing['company']) || !empty($vatId))) {
             $display = null;
         }
         
@@ -90,8 +153,6 @@ class ratepay_abstract
                 }
             }
         }
-
-        $this->setInfoVisited(false);
 
         return $display;
     }
@@ -124,11 +185,6 @@ class ratepay_abstract
             $fields[] = $vatId;
         }
         
-        $jsFunctions = file_get_contents(DIR_FS_CATALOG . 'templates/javascript/ratepay_checkout.js');
-        $js = 'window.onload = RpCheckout.ratepayOnLoad;';
-        $fields[] = array('title' => '', 'field' => sprintf('<script type="text/javascript">%s</script>', $jsFunctions));
-        $fields[] = array('title' => '', 'field' => sprintf('<script type="text/javascript">%s</script>', $js));
-        
         return $fields;
     }
 
@@ -140,7 +196,7 @@ class ratepay_abstract
     protected function _getPhoneField()
     {
         if ($this->_isPhoneNeeded()) {
-            return array('title' => 'Telefon:', 'field' => xtc_draw_input_field($this->code . '_phone', ''));
+            return array('title' => '', 'field' => '<div><small>Telefon</small></div>' . xtc_draw_input_field($this->code . '_phone', ''));
         }
 
         return null;
@@ -155,8 +211,8 @@ class ratepay_abstract
     {
         if ($this->_isDobNeeded()) {
             return array(
-                'title' => 'Geburtstag:',
-                'field' => xtc_draw_input_field($this->code . '_birthdate', '') . " " . constant(strtoupper($this->code) . "_VIEW_PAYMENT_BIRTHDATE_FORMAT")
+                'title' => '',
+                'field' => '<div><small>Geburtstag</small></div>' . xtc_draw_input_field($this->code . '_birthdate', '') . " " . constant(strtoupper($this->code) . "_VIEW_PAYMENT_BIRTHDATE_FORMAT")
             );
         }
 
@@ -171,7 +227,7 @@ class ratepay_abstract
     protected function _getCompanyField()
     {
         if ($this->_isCompanyNeeded()) {
-            return array('title' => 'Firma:', 'field' => xtc_draw_input_field($this->code . '_company', ''));
+            return array('title' => '', 'field' => '<div><small>Firma</small></div>' . xtc_draw_input_field($this->code . '_company', ''));
         }
 
         return null;
@@ -185,7 +241,7 @@ class ratepay_abstract
     protected function _getVatIdField()
     {
         if ($this->_isVatIdNeeded()) {
-            return array('title' => 'Umsatzsteuer ID:', 'field' => xtc_draw_input_field($this->code . '_vatid', ''));
+            return array('title' => '', 'field' => '<div><small>Umsatzsteuer ID</small></div>' . xtc_draw_input_field($this->code . '_vatid', ''));
         }
 
         return null;
@@ -209,8 +265,8 @@ class ratepay_abstract
      */
     protected function _isDobNeeded()
     {
-        $dob = Db::getCustomersDob(null, Session::getSessionEntry('customer_id'));
-        return empty($dob);
+        $dob = rpDb::getCustomersDob(null, rpSession::getSessionEntry('customer_id'));
+        return empty($dob) || $dob === '0000-00-00';
     }
     
     /**
@@ -221,7 +277,7 @@ class ratepay_abstract
     protected function _isCompanyNeeded()
     {
         global $order;
-        $vatId = Db::getCustomersVatId(null, Session::getSessionEntry('customer_id'));
+        $vatId = rpDb::getCustomersVatId(null, rpSession::getSessionEntry('customer_id'));
         return (empty($order->customer['company']) || empty($order->billing['company'])) && !empty($vatId);
     }
     
@@ -233,7 +289,7 @@ class ratepay_abstract
     protected function _isVatIdNeeded()
     {
         global $order;
-        $vatId = Db::getCustomersVatId(null, Session::getSessionEntry('customer_id'));
+        $vatId = rpDb::getCustomersVatId(null, rpSession::getSessionEntry('customer_id'));
         return (!empty($order->customer['company']) || !empty($order->billing['company'])) && empty($vatId);
     }
     
@@ -253,7 +309,8 @@ class ratepay_abstract
      * 
      * @param string $dateStr 
      */
-    protected function _isAdult($dateStr) {
+    protected function _isAdult($dateStr) 
+    {
         $today = array();
         $geb = strval($dateStr);
 
@@ -281,69 +338,63 @@ class ratepay_abstract
      */
     public function pre_confirmation_check()
     {
-        $error = array();
         global $order;
-        if (!$this->isInfoVisited()) {
-            if ($this->_isPhoneNeeded()) {
-                if (Globals::hasPostEntry($this->code . '_phone') && !Data::betterEmpty(Globals::getPostEntry($this->code . '_phone'))) {
-                    Db::setXtCustomerEntry(Session::getSessionEntry('customer_id'), 'customers_telephone', Globals::getPostEntry($this->code . '_phone'));
-                    $order->customer['telephone'] = Globals::getPostEntry($this->code . '_phone');
-                } else {
-                    $error['PHONE'] = 'MISSING';
-                }
-            }
-            
-            if ($this->_isDobNeeded()) {
-                if (Globals::hasPostEntry($this->code . '_birthdate') && !Data::betterEmpty(Globals::getPostEntry($this->code . '_birthdate'))) {
-                    if (!$this->_isDobValid(Globals::getPostEntry($this->code . '_birthdate'))) {
-                        $error['DOB'] = 'INVALID';
-                    } else {
-                        $dob = Globals::getPostEntry($this->code . '_birthdate');
-                        $dateStr = substr(xtc_date_raw($dob), 6, 2) . "." . substr(xtc_date_raw($dob), 4, 2) . "." . substr(xtc_date_raw($dob), 0, 4) . " 00:00:00";
-                        Db::setXtCustomerEntry(Session::getSessionEntry('customer_id'), 'customers_dob', $dateStr);
-                    }
-                } else {
-                    $error['DOB'] = 'MISSING';
-                }
-            }
-            
-            if ($this->_isCompanyNeeded()) {
-                if (Globals::hasPostEntry($this->code . '_company') && !Data::betterEmpty(Globals::getPostEntry($this->code . '_company'))) {
-                    $company = Globals::getPostEntry($this->code . '_company');
-                    $order->customer['company'] = $company;
-                    $order->billing['company']  = $company;
-                    $dbInput = xtc_db_input(Db::getXtCustomerEntry(Session::getSessionEntry('customer_id'), 'customers_default_address_id'));
-                    xtc_db_query("UPDATE " . TABLE_ADDRESS_BOOK . " "
-                               . "SET entry_company = '" . xtc_db_prepare_input($company) . "' "
-                               . "WHERE address_book_id = '" . $dbInput . "'"
-                    );
-
-                } else {
-                    $error['VATID'] = 'MISSING';
-                }
-            }
-            
-            if ($this->_isVatIdNeeded()) {
-                if (Globals::hasPostEntry($this->code . '_vatid') && !Data::betterEmpty(Globals::getPostEntry($this->code . '_vatid'))) {
-                    Db::setXtCustomerEntry(Session::getSessionEntry('customer_id'), 'customers_vat_id', Globals::getPostEntry($this->code . '_vatid'));
-                } else {
-                    $error['VATID'] = 'MISSING';
-                }
-            }
-            
-            if (!$this->_isAdult(Db::getCustomersDob(null, Session::getSessionEntry('customer_id')))) {
-                 $error['DOB'] = 'YOUNGER';
-            }
-            
-            if (empty($error)) {
-                $this->setInfoVisited(true);
-                Session::setRpSessionEntry('basketAmount', Data::getBasketAmount($order));
-                $url = xtc_href_link($this->code . "_checkout_terms.php", '', 'SSL');
+        
+        if (!rpGlobals::hasPostEntry($this->code . '_conditions')) {
+            $this->error['CONDITIONS'] = 'MISSING';
+        }
+        
+        if ($this->_isPhoneNeeded()) {
+            if (rpGlobals::hasPostEntry($this->code . '_phone') && !rpData::betterEmpty(rpGlobals::getPostEntry($this->code . '_phone'))) {
+                rpDb::setXtCustomerEntry(rpSession::getSessionEntry('customer_id'), 'customers_telephone', rpGlobals::getPostEntry($this->code . '_phone'));
+                $order->customer['telephone'] = rpGlobals::getPostEntry($this->code . '_phone');
             } else {
-                $error = urlencode($this->_getErrorString($error));
-                $url = xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL');
+                $this->error['PHONE'] = 'MISSING';
             }
-            
+        }
+        
+        if ($this->_isDobNeeded()) {
+            if (rpGlobals::hasPostEntry($this->code . '_birthdate') && !rpData::betterEmpty(rpGlobals::getPostEntry($this->code . '_birthdate'))) {
+                if (!$this->_isDobValid(rpGlobals::getPostEntry($this->code . '_birthdate'))) {
+                    $this->error['DOB'] = 'INVALID';
+                } else {
+                    $dob = rpGlobals::getPostEntry($this->code . '_birthdate');
+                    $dateStr = substr(xtc_date_raw($dob), 6, 2) . "." . substr(xtc_date_raw($dob), 4, 2) . "." . substr(xtc_date_raw($dob), 0, 4) . " 00:00:00";
+                    $dateStr = substr(xtc_date_raw($dob), 0, 4) . '-' . substr(xtc_date_raw($dob), 4, 2) . '-' .  substr(xtc_date_raw($dob), 6, 2) . ' 00:00:00';
+                    rpDb::setXtCustomerEntry(rpSession::getSessionEntry('customer_id'), 'customers_dob', $dateStr);
+                }
+            } else {
+                $this->error['DOB'] = 'MISSING';
+            }
+        }
+
+        if ($this->_isCompanyNeeded()) {
+            if (rpGlobals::hasPostEntry($this->code . '_company') && !rpData::betterEmpty(rpGlobals::getPostEntry($this->code . '_company'))) {
+                $company = rpGlobals::getPostEntry($this->code . '_company');
+                $order->customer['company'] = $company;
+                $order->billing['company']  = $company;
+                $dbInput = xtc_db_input(rpDb::getXtCustomerEntry(rpSession::getSessionEntry('customer_id'), 'customers_default_address_id'));
+                xtc_db_query("UPDATE " . TABLE_ADDRESS_BOOK . " " . "SET entry_company = '" . xtc_db_prepare_input($company) . "' " . "WHERE address_book_id = '" . $dbInput . "'");
+            } else {
+                $this->error['VATID'] = 'MISSING';
+            }
+        }
+
+        if ($this->_isVatIdNeeded()) {
+            if (rpGlobals::hasPostEntry($this->code . '_vatid') && !rpData::betterEmpty(rpGlobals::getPostEntry($this->code . '_vatid'))) {
+                rpDb::setXtCustomerEntry(rpSession::getSessionEntry('customer_id'), 'customers_vat_id', rpGlobals::getPostEntry($this->code . '_vatid'));
+            } else {
+                $this->error['VATID'] = 'MISSING';
+            }
+        }
+
+        if (!$this->_isAdult(rpDb::getCustomersDob(null, rpSession::getSessionEntry('customer_id')))) {
+             $this->error['DOB'] = 'YOUNGER';
+        }
+
+        if (!empty($this->error)) {
+            $error = urlencode($this->_getErrorString($this->error));
+            $url = xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL');
             xtc_redirect($url);
         }
     }
@@ -366,19 +417,22 @@ class ratepay_abstract
         global $order;
         $result = $this->_paymentInit();
         if (!array_key_exists('error', $result) && array_key_exists('transactionId', $result)) {
-            Session::setRpSessionEntry('transactionId', $result['transactionId']);
-            Session::setRpSessionEntry('transactionShortId', $result['transactionShortId']);
+            rpSession::setRpSessionEntry('transactionId', $result['transactionId']);
+            rpSession::setRpSessionEntry('transactionShortId', $result['transactionShortId']);
             $result = $this->_paymentRequest($result['transactionId'], $result['transactionShortId']);
             if (array_key_exists('error', $result) && !array_key_exists('transactionId', $result)) {
-                Session::cleanRpSession();
-                $error = urlencode(constant(strtoupper($this->code) . '_ERROR_GATEWAY'));
+                rpSession::cleanRpSession();
+                rpData::disableRatepay();
+                $error = urlencode(constant(strtoupper($this->code) . '_ERROR'));
                 xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
             } else {
-                Session::setRpSessionEntry('customers_country_code', $order->customer['country']['iso_code_2']);
-                Session::setRpSessionEntry('descriptor', $result['descriptor']);
+                rpSession::setRpSessionEntry('customers_country_code', $order->customer['country']['iso_code_2']);
+                rpSession::setRpSessionEntry('descriptor', $result['descriptor']);
+                rpSession::setRpSessionEntry('rpOrder', clone $order);
             }
         } else {
-            $error = urlencode(constant(strtoupper($this->code) . '_ERROR'));
+            rpData::disableRatepay();
+            $error = urlencode(constant(strtoupper($this->code) . '_ERROR_GATEWAY'));
             xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
         }
     }
@@ -389,19 +443,31 @@ class ratepay_abstract
      */
     public function after_process() 
     {
-        global $insert_id, $order;
-        $transactionId = Session::getRpSessionEntry('transactionId');
-        $transactionShortId = Session::getRpSessionEntry('transactionShortId');
+        global $insert_id;
+        $transactionId = rpSession::getRpSessionEntry('transactionId');
+        $transactionShortId = rpSession::getRpSessionEntry('transactionShortId');
         if (!empty($transactionId)) {
             $result = $this->_paymentConfirm($transactionId, $transactionShortId, $insert_id);
             if (!array_key_exists('error', $result)) {
-                $this->_saveRpOrder($order, $insert_id);
-                Session::cleanRpSession();
+                $this->_saveRpOrder(rpSession::getRpSessionEntry('rpOrder'), $insert_id);
+                $this->_setRatepayOrderPaid($insert_id);
+                rpSession::cleanRpSession();
             } else {
-                Session::cleanRpSession();
+                rpSession::cleanRpSession();
                 $error = urlencode(constant(strtoupper($this->code) . '_ERROR'));
                 xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
             }
+        }
+    }
+    
+    /**
+     * @param string $insert_id
+     */
+    protected function _setRatepayOrderPaid($insert_id)
+    {
+        if (defined('MODULE_PAYMENT_' . strtoupper($this->code) . '_ORDER_STATUS_ID')) {
+            $order_status_id = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_ORDER_STATUS_ID');
+            xtc_db_query("UPDATE " . TABLE_ORDERS . " SET orders_status='" . $order_status_id . "' WHERE orders_id='" . $insert_id . "'");
         }
     }
     
@@ -411,7 +477,7 @@ class ratepay_abstract
     public function process_button() 
     {
         global $ot_coupon;
-        Session::setRpSessionEntry('coupon', $ot_coupon->output);
+        rpSession::setRpSessionEntry('coupon', $ot_coupon->output);
     }
     
     /**
@@ -422,10 +488,10 @@ class ratepay_abstract
     function get_error() 
     {
         global $_GET;
-
+        
         return array (
-                'title' => 'RatePAY Error',
-                'error' => urldecode($_GET['error_message'])
+            'title' => 'RatePAY Error',
+            'error' => urldecode($_GET['error_message'])
         );
     }
     
@@ -437,7 +503,7 @@ class ratepay_abstract
      */
     protected function _saveRpOrder(order $order, $orderId)
     {
-        Db::setRatepayOrderData($order, $orderId);
+        rpDb::setRatepayOrderData($order, $orderId);
     }
 
     /**
@@ -467,11 +533,11 @@ class ratepay_abstract
     {
         global $order;
         $data = array(
-            'HeadInfo' => RequestMapper::getHeadInfoModel($order)
+            'HeadInfo' => rpRequestMapper::getHeadInfoModel($order)
         );
-        $requestService = new RequestService($this->sandbox, $data);
+        $requestService = new rpRequestService($this->sandbox, $data);
         $result = $requestService->callPaymentInit();
-        Db::xmlLog($order, $requestService->getRequest(), 'N/A', $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), 'N/A', $requestService->getResponse());
         return $result;
     }
 
@@ -486,15 +552,18 @@ class ratepay_abstract
     protected function _paymentRequest($transactionId, $transactionShortId)
     {
         global $order;
+        
+        rpSession::setRpSessionEntry('countryCode', $order->customer['country']['iso_code_2']);
+        
         $data = array(
-            'HeadInfo' => RequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId),
-            'CustomerInfo' => RequestMapper::getCustomerInfoModel($order),
-            'BasketInfo' => RequestMapper::getBasketInfoModel($order),
-            'PaymentInfo' => RequestMapper::getPaymentInfoModel($order)
+            'HeadInfo' => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId),
+            'CustomerInfo' => rpRequestMapper::getCustomerInfoModel($order),
+            'BasketInfo' => rpRequestMapper::getBasketInfoModel($order),
+            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order)
         );
-        $requestService = new RequestService($this->sandbox, $data);
+        $requestService = new rpRequestService($this->sandbox, $data);
         $result = $requestService->callPaymentRequest();
-        Db::xmlLog($order, $requestService->getRequest(), 'N/A', $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), 'N/A', $requestService->getResponse());
         return $result;
     }
 
@@ -511,32 +580,41 @@ class ratepay_abstract
     {
         global $order;
         $data = array(
-            'HeadInfo' => RequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId)
+            'HeadInfo' => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId)
         );
-        $requestService = new RequestService($this->sandbox, $data);
+        
+        $requestService = new rpRequestService($this->sandbox, $data);
         $result = $requestService->callPaymentConfirm();
-        Db::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
         return $result;
     }
-
-    /**
-     * Set info page visited
-     * 
-     * @param boolean $visited
-     */
-    public function setInfoVisited($visited)
+    
+    protected function _installRatepayPaidState()
     {
-        Session::setRpSessionEntry('infoVisited', $visited);
-    }
+        $check_query = xtc_db_query("select orders_status_id from " . TABLE_ORDERS_STATUS . " where orders_status_name = 'RatePAY [Bezahlt]' limit 1");
 
-    /**
-     * is info page visited 
-     * 
-     * @return boolean
-     */
-    protected function isInfoVisited()
-    {
-        return Session::getRpSessionEntry('infoVisited');
-    }
+        if (xtc_db_num_rows($check_query) < 1) {
+            $status_query = xtc_db_query("select max(orders_status_id) as status_id from " . TABLE_ORDERS_STATUS);
+            $status = xtc_db_fetch_array($status_query);
 
+            $status_id = $status['status_id'] + 1;
+
+            $languages = xtc_get_languages();
+
+            foreach ($languages as $lang) {
+                xtc_db_query("insert into " . TABLE_ORDERS_STATUS . " (orders_status_id, language_id, orders_status_name) values ('" . $status_id . "', '" . $lang['id'] . "', 'RatePAY [Bezahlt]')");
+            }
+
+            $flags_query = xtc_db_query("describe " . TABLE_ORDERS_STATUS . " public_flag");
+            if (xtc_db_num_rows($flags_query) == 1) {
+                xtc_db_query("update " . TABLE_ORDERS_STATUS . " set public_flag = 0 and downloads_flag = 0 where orders_status_id = '" . $status_id . "'");
+            }
+        } else {
+            $check = xtc_db_fetch_array($check_query);
+
+            $status_id = $check['orders_status_id'];
+        }
+
+        return $status_id;
+    }
 }

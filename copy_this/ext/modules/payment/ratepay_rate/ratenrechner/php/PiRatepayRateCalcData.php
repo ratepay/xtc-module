@@ -21,9 +21,8 @@ class PiRatepayRateCalcData implements PiRatepayRateCalcDataInterface
      * @return string
      */
     public function getProfileId()
-    {
-        $ratepay = new ratepay_rate();
-        return $ratepay->profileId;
+    {   
+        return rpSession::getRpSessionEntry('profileId');
     }
 
     /**
@@ -44,9 +43,7 @@ class PiRatepayRateCalcData implements PiRatepayRateCalcDataInterface
      */
     public function getSecurityCodeHashed()
     {
-        $ratepay = new ratepay_rate();
-        $securityCode = $ratepay->securityCode;
-        return $securityCode;
+        return rpSession::getRpSessionEntry('securityCode');
     }
 
     /**
@@ -115,7 +112,7 @@ class PiRatepayRateCalcData implements PiRatepayRateCalcDataInterface
      */
     public function getAmount()
     {
-        return Session::getRpSessionEntry('basketAmount');
+        return rpSession::getRpSessionEntry('basketAmount');
     }
 
     /**
@@ -125,7 +122,7 @@ class PiRatepayRateCalcData implements PiRatepayRateCalcDataInterface
      */
     public function getLanguage()
     {
-        if (Session::getSessionEntry('language') == 'german') {
+        if (rpSession::getSessionEntry('language') == 'german') {
             return 'DE';
         } else {
             return 'EN';
@@ -157,20 +154,20 @@ class PiRatepayRateCalcData implements PiRatepayRateCalcDataInterface
      */
     public function setData($total_amount, $amount, $interest_rate, $interest_amount, $service_charge, $annual_percentage_rate, $monthly_debit_interest, $number_of_rates, $rate, $last_rate, $payment_firstday)
     {
-        Session::setRpSessionEntry('ratepay_rate_total_amount', $total_amount);
-        Session::setRpSessionEntry('ratepay_rate_amount', $amount);
-        Session::setRpSessionEntry('ratepay_rate_interest_rate', $interest_rate);
-        Session::setRpSessionEntry('ratepay_rate_interest_amount', $interest_amount);
-        Session::setRpSessionEntry('ratepay_rate_service_charge', $service_charge);
-        Session::setRpSessionEntry('ratepay_rate_annual_percentage_rate', $annual_percentage_rate);
-        Session::setRpSessionEntry('ratepay_rate_monthly_debit_interest', $monthly_debit_interest);
-        Session::setRpSessionEntry('ratepay_rate_number_of_rates', $number_of_rates);
-        Session::setRpSessionEntry('ratepay_rate_rate', $rate);
-        Session::setRpSessionEntry('ratepay_rate_last_rate', $last_rate);
+        rpSession::setRpSessionEntry('ratepay_rate_total_amount', $total_amount);
+        rpSession::setRpSessionEntry('ratepay_rate_amount', $amount);
+        rpSession::setRpSessionEntry('ratepay_rate_interest_rate', $interest_rate);
+        rpSession::setRpSessionEntry('ratepay_rate_interest_amount', $interest_amount);
+        rpSession::setRpSessionEntry('ratepay_rate_service_charge', $service_charge);
+        rpSession::setRpSessionEntry('ratepay_rate_annual_percentage_rate', $annual_percentage_rate);
+        rpSession::setRpSessionEntry('ratepay_rate_monthly_debit_interest', $monthly_debit_interest);
+        rpSession::setRpSessionEntry('ratepay_rate_number_of_rates', $number_of_rates);
+        rpSession::setRpSessionEntry('ratepay_rate_rate', $rate);
+        rpSession::setRpSessionEntry('ratepay_rate_last_rate', $last_rate);
         if (array_key_exists('pi_dd', $_SESSION)) {
-            Session::setRpSessionEntry('ratepay_payment_firstday', $_SESSION['pi_dd']);
+            rpSession::setRpSessionEntry('ratepay_payment_firstday', $_SESSION['pi_dd']);
         } else {
-            Session::setRpSessionEntry('ratepay_payment_firstday', $payment_firstday);
+            rpSession::setRpSessionEntry('ratepay_payment_firstday', $payment_firstday);
         }
     }
 
@@ -183,17 +180,17 @@ class PiRatepayRateCalcData implements PiRatepayRateCalcDataInterface
     public function getData()
     {
         return array(
-            'total_amount' => Session::getRpSessionEntry('ratepay_rate_total_amount'),
-            'amount' => Session::getRpSessionEntry('ratepay_rate_amount'),
-            'interest_rate' => Session::getRpSessionEntry('ratepay_rate_interest_rate'),
-            'interest_amount' => Session::getRpSessionEntry('ratepay_rate_interest_amount'),
-            'service_charge' => Session::getRpSessionEntry('ratepay_rate_service_charge'),
-            'annual_percentage_rate' => Session::getRpSessionEntry('ratepay_rate_annual_percentage_rate'),
-            'monthly_debit_interest' => Session::getRpSessionEntry('ratepay_rate_monthly_debit_interest'),
-            'number_of_rates' => Session::getRpSessionEntry('ratepay_rate_number_of_rates'),
-            'rate' => Session::getRpSessionEntry('ratepay_rate_rate'),
-            'last_rate' => Session::getRpSessionEntry('ratepay_rate_last_rate'),
-            'payment_firstday' => Session::getRpSessionEntry('ratepay_payment_firstday')
+            'total_amount' => rpSession::getRpSessionEntry('ratepay_rate_total_amount'),
+            'amount' => rpSession::getRpSessionEntry('ratepay_rate_amount'),
+            'interest_rate' => rpSession::getRpSessionEntry('ratepay_rate_interest_rate'),
+            'interest_amount' => rpSession::getRpSessionEntry('ratepay_rate_interest_amount'),
+            'service_charge' => rpSession::getRpSessionEntry('ratepay_rate_service_charge'),
+            'annual_percentage_rate' => rpSession::getRpSessionEntry('ratepay_rate_annual_percentage_rate'),
+            'monthly_debit_interest' => rpSession::getRpSessionEntry('ratepay_rate_monthly_debit_interest'),
+            'number_of_rates' => rpSession::getRpSessionEntry('ratepay_rate_number_of_rates'),
+            'rate' => rpSession::getRpSessionEntry('ratepay_rate_rate'),
+            'last_rate' => rpSession::getRpSessionEntry('ratepay_rate_last_rate'),
+            'payment_firstday' => rpSession::getRpSessionEntry('ratepay_payment_firstday')
         );
     }
 

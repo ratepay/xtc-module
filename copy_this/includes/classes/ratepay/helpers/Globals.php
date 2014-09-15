@@ -8,7 +8,7 @@
 /**
  * Description of Globals
  */
-class Globals
+class rpGlobals
 {
 
     /**

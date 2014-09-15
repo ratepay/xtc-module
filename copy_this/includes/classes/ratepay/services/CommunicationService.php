@@ -18,7 +18,7 @@
 /**
  * Communication service for the curl communication 
  */
-class CommunicationService
+class rpCommunicationService
 {
 
     /**

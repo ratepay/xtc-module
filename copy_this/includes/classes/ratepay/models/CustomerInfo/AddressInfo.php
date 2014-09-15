@@ -19,7 +19,7 @@
 /**
  * AddressInfo model
  */
-class AddressInfo
+class rpAddressInfo
 {
 
     /**
@@ -78,7 +78,7 @@ class AddressInfo
      * Set type
      * 
      * @param string $type
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function setType($type)
     {
@@ -101,7 +101,7 @@ class AddressInfo
      * Set street
      * 
      * @param string $street
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function setStreet($street)
     {
@@ -124,7 +124,7 @@ class AddressInfo
      * Set street number
      * 
      * @param string $streetNumber
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function setStreetNumber($streetNumber)
     {
@@ -147,7 +147,7 @@ class AddressInfo
      * Set zip
      * 
      * @param string $zip
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function setZip($zip)
     {
@@ -170,7 +170,7 @@ class AddressInfo
      * Set city
      * 
      * @param string $city
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function setCity($city)
     {
@@ -193,7 +193,7 @@ class AddressInfo
      * Set country ID
      * 
      * @param string $countryId
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function setCountryId($countryId)
     {

@@ -1,0 +1,65 @@
+
+<!--
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * @category  PayIntelligent
+ * @package   ratepay
+ * @copyright (C) 2012 PayIntelligent GmbH  <http://www.payintelligent.de/>
+ * @license   GPLv2
+ */ 
+-->
+<link type="text/css" rel="stylesheet" href="ext/modules/payment/ratepay_rate/ratenrechner/css/style.css"/>
+<script type="text/javascript" src="ext/modules/payment/ratepay_rate/ratenrechner/js/path.js"></script>
+<script type="text/javascript" src="ext/modules/payment/ratepay_rate/ratenrechner/js/layout.js"></script>
+<script type="text/javascript" src="ext/modules/payment/ratepay_rate/ratenrechner/js/ajax.js"></script>
+<script type="text/javascript" src="ext/modules/payment/ratepay_rate/ratenrechner/js/mouseaction.js"></script>
+<style>
+{literal}
+    .piRpConditionLink
+    {
+        text-decoration: underline;
+        color: #1E7EC8;
+    }
+{/literal}
+</style>
+<table>
+    <tr>
+        <td colspan='2'>
+            <table>
+                <tr>
+                    <td class="piRpCheckbox">
+                        <input id="ratepay_rate_conditions" type="checkbox" name="ratepay_rate_conditions" value="ratepay-rate-conditions"/>
+                    </td>
+                    <td>
+                        {$RATEPAY_INFO_1}
+                        <a href="{$ratepayPrivacyUrl}" target="_blank" class="piRpConditionLink">{$RATEPAY_INFO_2}</a>
+                        {$RATEPAY_INFO_3}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <td colspan="2">
+            <div id="pirpmain-cont" class="pirpmain-cont">
+            </div>
+            <script type="text/javascript">
+            {literal}
+                if (document.getElementById('pirpmain-cont')) {
+                    piLoadrateCalculator();
+                }
+            {/literal}
+            </script>
+        </td>
+    </tr>
+</table>

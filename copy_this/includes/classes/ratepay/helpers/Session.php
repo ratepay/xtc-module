@@ -9,7 +9,7 @@
  * Description of Session
  *
  */
-class Session
+class rpSession
 {
 
     /**

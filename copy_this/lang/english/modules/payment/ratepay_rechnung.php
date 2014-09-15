@@ -17,28 +17,38 @@
  */
 
 // Config text and description
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT_DESCRIPTION', 'Bieten Sie Ihren Kunden sicheren Rechnungskauf');
+define('MODULE_PAYMENT_RATEPAY_RATE_TEXT_DESCRIPTION', 'Bieten Sie Ihren Kunden sicheren Rechnungskauf');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT', 'RatePAY Rechnung');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT_TITLE', 'RatePAY Rechnung');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT_DESCRIPTION', '');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_STATUS_TITLE', 'RatePAY aktivieren');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_STATUS_TITLE', 'Zahlart aktivieren');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_STATUS_DESC', 'Aktivieren Sie RatePAY Rate');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SANDBOX_TITLE', 'Sandbox');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SANDBOX_DESC', 'Testserver oder Livebetrieb?');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_TITLE', 'Profil ID');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_DESC', 'Ihre von RatePAY zugewiesende ID');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_TITLE', 'Sicherheitsschl&uuml;ssel');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_DESC', 'Ihr von RatePAY zugewiesener Sicherheitsschl&uuml;ssel');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_TITLE', 'Minimaler Bestellbetrag');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_DESC', 'Tragen Sie hier den minimalen Bestellbetrag ein');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_TITLE', 'Maximaler Bestellbetrag');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_DESC', 'Tragen Sie hier den maximalen Bestellbetrag ein');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_GTC_URL_TITLE', 'AGB URL');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_GTC_URL_DESC', 'Die URL zu Ihren AGB');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_TITLE', 'RatePAY Datenschutz URL');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DESC', 'Die URL zur RatePAY Datenschutzerkl&auml;rung');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_PRIVACY_URL_TITLE', 'H&auml;ndler Datenschutz URL');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_PRIVACY_URL_DESC', 'Die URL zur H&auml;ndler Datenschutzerkl&auml;rung');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_DE_TITLE', 'Profil ID DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_DE_DESC', 'Ihre von RatePAY zugewiesende ID f&uumlr Deutschland');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_DE_TITLE', 'Sicherheitsschl&uuml;ssel DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_DE_DESC', 'Ihr von RatePAY zugewiesener Sicherheitsschl&uuml;ssel f&uumlr Deutschland');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_AT_TITLE', 'Profil ID AT');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_AT_DESC', 'Ihre von RatePAY zugewiesende ID f&uumlr &Ouml;sterreich');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_AT_TITLE', 'Sicherheitsschl&uuml;ssel AT');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_AT_DESC', 'Ihr von RatePAY zugewiesener Sicherheitsschl&uuml;ssel f&uumlr &Ouml;sterreich');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_DE_TITLE', 'Minimaler Bestellbetrag DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_DE_DESC', 'Tragen Sie hier den minimalen Bestellbetrag f&uuml; aus Deutschland ein');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_DE_TITLE', 'Maximaler Bestellbetrag DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_DE_DESC', 'Tragen Sie hier den maximalen Bestellbetrag f&uuml; aus Deutschland ein');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_AT_TITLE', 'Minimaler Bestellbetrag AT');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_AT_DESC', 'Tragen Sie hier den minimalen Bestellbetrag f&uuml;r Kunden aus &Ouml;sterreich ein');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_AT_TITLE', 'Maximaler Bestellbetrag  AT');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_AT_DESC', 'Tragen Sie hier den maximalen Bestellbetrag f&uuml;r Kunden aus &Ouml;sterreich ein');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT_TITLE', 'Business to Business AT');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT_DESC', 'B2B verkauf in &Ouml;sterreich erlauben');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE_TITLE', 'Business to Business DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE_DESC', 'B2B verkauf in Deutschland erlauben');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE_TITLE', 'RatePAY ZGB-DSH URL DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE_DESC', 'Zus&auml;tzliche Gesch&auml;ftsbedingungen und Datenschutzerkl&auml;rungen DE');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT_TITLE', 'RatePAY ZGB-DSH URL AT');
+define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT_DESC', 'Zus&auml;tzliche Gesch&auml;ftsbedingungen und Datenschutzerkl&auml;rungen AT');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_LOGGING_TITLE', 'Logging aktivieren');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_LOGGING_DESC', 'Loggen Sie alle Transaktionen mit RatePAY');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_NAME_TITLE', 'Beg&uuml;nstigte Firma');
@@ -81,26 +91,15 @@ define('MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID_TITLE', 'Bestellstatus')
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID_DESC', 'Bestellungen, welche mit diesem Modul gemacht werden, auf diesen Status setzen');
 // Config text and description end
 // Ratepay Info
-define('RATEPAY_RECHNUNG_INFO_1', 'stellt mit Unterst&uuml;tzung von RatePAY die M&ouml;glichkeit der RatePAY-Rechnung bereit. Sie nehmen damit einen Kauf auf Rechnung vor. Die Rechnung ist innerhalb von 14 Tagen nach Rechnungsdatum zur Zahlung f&auml;llig.');
-define('RATEPAY_RECHNUNG_INFO_2', 'RatePAY-Rechnung ist ');
-define('RATEPAY_RECHNUNG_INFO_3', 'ab einem Einkaufswert von ');
-define('RATEPAY_RECHNUNG_INFO_4', ' bis zu einem Einkaufswert von ');
-define('RATEPAY_RECHNUNG_INFO_5', ' m&ouml;glich (jeweils inklusive Mehrwertsteuer und Versandkosten).');
-define('RATEPAY_RECHNUNG_INFO_6', 'Bitte beachten Sie, dass RatePAY-Rechnung nur genutzt werden kann, wenn Rechnungs- und Lieferadresse identisch sind und Ihrem privaten Wohnsitz entsprechen (keine Firmen- und keine Postfachadresse). Ihre Adresse muss im Gebiet der Bundesrepublik Deutschland liegen. Bitte gehen Sie gegebenenfalls zur&uuml;ck und korrigieren Sie Ihre Daten. ');
-define('RATEPAY_RECHNUNG_INFO_7', 'Ich habe die ');
-define('RATEPAY_RECHNUNG_INFO_8', 'Allgemeinen Gesch&auml;ftsbedingungen');
-define('RATEPAY_RECHNUNG_INFO_9', ' zur Kenntnis genommen und erkl&auml;re mich mit deren Geltung einverstanden. Au&szlig;erdem erkl&auml;re ich hiermit meine Einwilligung zur Verwendung meiner Daten gem&auml;&szlig; der ');
-define('RATEPAY_RECHNUNG_INFO_10', 'RatePAY-Datenschutzerkl&auml;rung');
-define('RATEPAY_RECHNUNG_INFO_11', ' und bin insbesondere damit einverstanden, zum Zwecke der Durchf&uuml;hrung des Vertrags &uuml;ber die von mir angebene E-Mail Adresse kontaktiert zu werden.');
-define('RATEPAY_RECHNUNG_INFO_12', 'Au&szlig;erdem akzeptiere ich die ');
-define('RATEPAY_RECHNUNG_INFO_13', 'H&auml;ndler Datenschutzerkl&auml;rung');
-define('RATEPAY_RECHNUNG_AGB_ERROR', 'Bitte akzeptieren Sie die Allgemeinen Nutzungsbedingungen um mit RatePAY Rechnung einzukaufen.');
+define('RATEPAY_RECHNUNG_INFO_1', 'Hiermit stimme ich der Verwendung meiner Daten gem&auml;&szlig; der ');
+define('RATEPAY_RECHNUNG_INFO_2', 'RatePAY-Datenschutzerkl&auml;rung');
+define('RATEPAY_RECHNUNG_INFO_3', ' zu und bin insbesondere damit einverstanden, zum Zwecke der Durchf&uuml;hrung des Vertrages &uuml;ber die von mir angegebene E-Mail-Adresse kontaktiert zu werden.');
 // Ratepay info end
 // Checkout
 define('RATEPAY_RECHNUNG_VIEW_PAYMENT_BIRTHDATE_FORMAT', '(tt.mm.jjjj)');
 // Checkout end
 // Checkout errors
-define('RATEPAY_RECHNUNG_ERROR', '*Leider ist eine Bezahlung mit RatePAY nicht m&ouml;glich. Diese Entscheidung ist von RatePAY auf der Grundlage einer automatisierten Datenverarbeitung getroffen worden. Einzelheiten erfahren Sie in der RatePAY-Datenschutzerkl&auml;rung.');
+define('RATEPAY_RECHNUNG_ERROR', '*Leider ist eine Bezahlung mit RatePAY nicht m&ouml;glich. Diese Entscheidung ist auf Grundlage einer automatisierten Datenverarbeitung getroffen worden. Einzelheiten finden sie in den zus&auml;tzlichen Allgemeinen Gesch&auml;ftsbedingungen und dem Datenschutzhinweis f&uuml;r RatePAY-Zahlungsarten.');
 define('RATEPAY_RECHNUNG_ERROR_GATEWAY', '*Leider ist die Verbindung zu RatePAY derzeit nicht m&ouml;glich, bitte versuchen Sie es zu einem sp&auml;teren Zeitpunkt erneut.');
 define('RATEPAY_RECHNUNG_PHONE_IS_MISSING', '*Geben Sie bitte f&uuml;r die Zahlungsoption RatePAY Rechnung Ihre Telefonnummer an.');
 define('RATEPAY_RECHNUNG_DOB_IS_MISSING', '*Geben Sie bitte f&uuml;r die Zahlungsoption RatePAY Rechnung Ihr Geburtsdatum an.');
@@ -108,6 +107,8 @@ define('RATEPAY_RECHNUNG_DOB_IS_INVALID', '*Geben Sie bitte f&uuml;r die Zahlung
 define('RATEPAY_RECHNUNG_DOB_IS_YOUNGER', '*Leider ist eine Zahlung mit RatePAY nicht m&ouml;glich. F&uuml;r die Zahlungsoption RatePAY Rechnung m&uuml;ssen Sie mindestens 18 Jahre alt sein.');
 define('RATEPAY_RECHNUNG_COMPANY_IS_MISSING', '*Sie haben eine USt-IdNr. angegeben. Geben Sie bitte f&uuml;r die Zahlungsoption RatePAY Rechnung den Namen Ihres Unternehmens an.');
 define('RATEPAY_RECHNUNG_VATID_IS_MISSING', '*Geben Sie bitte f&uuml;r die Zahlungsoption RatePAY Rechnung die USt-IdNr. Ihres Unternehmens an.');
+define('RATEPAY_RECHNUNG_CONDITIONS_IS_MISSING', '*Bitte akzeptieren Sie die Allgemeinen Nutzungsbedingungen um mit RatePAY Rechnung einzukaufen.');
+
 // Checkout errors end
 // Invoice
 define('RATEPAY_RECHNUNG_PDF_OWNER', 'Gesch&auml;ftsf&uuml;hrer:');

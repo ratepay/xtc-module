@@ -19,7 +19,7 @@
 /**
  * HeadInfo model
  */
-class HeadInfo
+class rpHeadInfo
 {
     /**
      * Transaction id
@@ -113,7 +113,7 @@ class HeadInfo
      * Set system id
      * 
      * @param string $systemId
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setSystemId($systemId)
     {
@@ -136,7 +136,7 @@ class HeadInfo
      * Set shop version
      * 
      * @param string $shopVersion
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setShopVersion($shopVersion)
     {
@@ -159,7 +159,7 @@ class HeadInfo
      * Set module version 
      * 
      * @param string $moduleVersion
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setModuleVersion($moduleVersion)
     {
@@ -182,7 +182,7 @@ class HeadInfo
      * Set shop system name
      * 
      * @param string $shopSystem
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setShopSystem($shopSystem)
     {
@@ -214,7 +214,7 @@ class HeadInfo
      * Set transaction short id
      * 
      * @param string $transactionShortId
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setTransactionShortId($transactionShortId)
     {
@@ -228,7 +228,7 @@ class HeadInfo
      * Set transaction id
      * 
      * @param string $transactionId
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setTransactionId($transactionId)
     {
@@ -251,7 +251,7 @@ class HeadInfo
      * Set subtype
      * 
      * @param string $subtype
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setSubtype($subtype)
     {
@@ -274,7 +274,7 @@ class HeadInfo
      * Set profile id
      * 
      * @param string $profileId
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setProfileId($profileId)
     {
@@ -297,7 +297,7 @@ class HeadInfo
      * Set security code
      * 
      * @param string $securityCode
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setSecurityCode($securityCode)
     {
@@ -320,7 +320,7 @@ class HeadInfo
      * Set order id
      * 
      * @param string $orderId
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public function setOrderId($orderId)
     {

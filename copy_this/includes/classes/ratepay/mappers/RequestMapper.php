@@ -19,6 +19,7 @@
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/HeadInfo.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/CustomerInfo/AddressInfo.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/CustomerInfo.php');
+require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/CustomerInfo/BankaccountInfo.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/BasketInfo.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/BasketInfo/ItemInfo.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/models/PaymentInfo.php');
@@ -31,7 +32,7 @@ require_once(dirname(__FILE__) . '/../../../classes/ratepay/helpers/Loader.php')
 /**
  * RequestMapper class, fills all models which are needed for the ratepay calls
  */
-class RequestMapper
+class rpRequestMapper
 {
     /**
      * Retrieve a headInfo model, filled with the merchant crdentials and some transaction data
@@ -41,12 +42,14 @@ class RequestMapper
      * @param string $transactionShortId 
      * @param int $orderId
      * @param string $subtype
-     * @return HeadInfo
+     * @return rpHeadInfo
      */
     public static function getHeadInfoModel(order $order, $transactionId = null, $transactionShortId = null, $orderId = null, $subtype = null)
     {
-        $payment = Loader::getRatepayPayment($order->info['payment_method']);
-        $headInfo = new HeadInfo();
+        rpSession::setRpSessionEntry('orderId', $orderId);
+        $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
+        
+        $headInfo = new rpHeadInfo();
         $headInfo->setOrderId($orderId)
                 ->setProfileId($payment->profileId)
                 ->setSecurityCode($payment->securityCode)
@@ -74,18 +77,32 @@ class RequestMapper
                 ->setShippingAddressInfo(self::getShippingAdressInfo($order, $orderId));
 
         $customerInfo->setCreditInquiry('yes')
-                ->setDateOfBirth(Db::getCustomersDob($orderId, Session::getSessionEntry('customer_id')))
+                ->setDateOfBirth(rpDb::getCustomersDob($orderId, rpSession::getSessionEntry('customer_id')))
                 ->setEmail($order->customer['email_address'])
-                ->setFax(Db::getCustomersFax($orderId, Session::getSessionEntry('customer_id')))
+                ->setFax(rpDb::getCustomersFax($orderId, rpSession::getSessionEntry('customer_id')))
                 ->setPhone($order->customer['telephone'])
-                ->setFirstName(is_null($orderId) ? $order->customer['firstname'] : Db::getShopOrderDataEntry($orderId, 'customers_firstname'))
-                ->setGender(is_null($orderId) ? $order->customer['gender'] : Db::getRatepayOrderDataEntry($orderId, 'gender'))
-                ->setIp(is_null($orderId) ? Data::getCustomerIp() : $order->customer['cIP'])
-                ->setLastName(is_null($orderId) ? $order->customer['lastname'] : Db::getShopOrderDataEntry($orderId, 'customers_lastname'))
-                ->setNationality(is_array($order->customer['country']) ? $order->customer['country']['iso_code_2'] : Db::getRatepayOrderDataEntry($orderId, 'customers_country_code'));
-        $vatId = Db::getCustomersVatId($orderId, Session::getSessionEntry('customer_id'));
+                ->setFirstName(is_null($orderId) ? $order->customer['firstname'] : rpDb::getShopOrderDataEntry($orderId, 'customers_firstname'))
+                ->setGender(is_null($orderId) ? $order->customer['gender'] : rpDb::getRatepayOrderDataEntry($orderId, 'gender'))
+                ->setIp(is_null($orderId) ? rpData::getCustomerIp() : $order->customer['cIP'])
+                ->setLastName(is_null($orderId) ? $order->customer['lastname'] : rpDb::getShopOrderDataEntry($orderId, 'customers_lastname'))
+                ->setNationality(is_array($order->customer['country']) ? $order->customer['country']['iso_code_2'] : rpDb::getRatepayOrderDataEntry($orderId, 'customers_country_code'));
+        $vatId = rpDb::getCustomersVatId($orderId, rpSession::getSessionEntry('customer_id'));
         if (!empty($order->customer['company']) && !empty($vatId)) {
             $customerInfo->setCompany($order->customer['company'])->setVatId($vatId);
+        }
+        
+        if ($order->info['payment_method'] === 'ratepay_sepa' && is_null($orderId)) {
+            $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
+            $bankAccount = $payment->getBankData();
+            $bankAccountInfo = new rpBankaccountInfo();
+            $bankAccountInfo->setAccountNumber($bankAccount['accountnumber']);
+            $bankAccountInfo->setBankName($bankAccount['bankname']);
+            $bankAccountInfo->setOwner($bankAccount['owner']);
+            if (!empty($bankAccount['bankcode'])) {
+                $bankAccountInfo->setBankAccount($bankAccount['bankcode']);
+            }
+            
+            $customerInfo->setBankAccount($bankAccountInfo);
         }
 
         return $customerInfo;
@@ -96,12 +113,12 @@ class RequestMapper
      * 
      * @param order $order
      * @param int $orderId
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     private static function getBillingAdressInfo(order $order, $orderId)
     {
-        $countryId = is_array($order->billing['country']) ? $order->billing['country']['iso_code_2'] : Db::getShopOrderDataEntry($orderId, 'billing_country_iso_code_2');
-        $addressInfo = new AddressInfo();
+        $countryId = is_array($order->billing['country']) ? $order->billing['country']['iso_code_2'] : rpDb::getShopOrderDataEntry($orderId, 'billing_country_iso_code_2');
+        $addressInfo = new rpAddressInfo();
         $addressInfo->setCity($order->billing['city'])
                 ->setCountryId($countryId)
                 ->setStreet($order->billing['street_address'])
@@ -115,12 +132,12 @@ class RequestMapper
      * 
      * @param order $order
      * @param int $orderId
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     private static function getShippingAdressInfo(order $order, $orderId)
     {
-        $countryId = is_array($order->delivery['country']) ? $order->delivery['country']['iso_code_2'] : Db::getShopOrderDataEntry($orderId, 'delivery_country_iso_code_2');
-        $addressInfo = new AddressInfo();
+        $countryId = is_array($order->delivery['country']) ? $order->delivery['country']['iso_code_2'] : rpDb::getShopOrderDataEntry($orderId, 'delivery_country_iso_code_2');
+        $addressInfo = new rpAddressInfo();
         $addressInfo->setCity($order->delivery['city'])
                 ->setCountryId($countryId)
                 ->setStreet($order->delivery['street_address'])
@@ -135,12 +152,12 @@ class RequestMapper
      * @param order $order
      * @param int $orderId
      * @param array $post
-     * @return BasketInfo
+     * @return rpBasketInfo
      */
     public static function getBasketInfoModel(order $order, $orderId = null, array $post = array())
     {
-        $basketInfo = new BasketInfo();
-        $basketInfo->setAmount(Data::getBasketAmount($order, $orderId, $post))
+        $basketInfo = new rpBasketInfo();
+        $basketInfo->setAmount(rpData::getBasketAmount($order, $orderId, $post))
                 ->setCurrency($order->info['currency'])
                 ->setItems(self::getItems($order, $post, $orderId));
         return $basketInfo;
@@ -156,16 +173,16 @@ class RequestMapper
     {
         $items = array();
         foreach ($order->products as $product) {
-            $items[] = self::getItem(Data::getItemData($product));
+            $items[] = self::getItem(rpData::getItemData($product));
         }
 
-        $shipping = Data::getShippingData($order);
+        $shipping = rpData::getShippingData($order);
         if (!empty($shipping)) {
             $items[] = self::getItem($shipping);
         }
 
-        foreach (Data::getDiscounts() as $discountData) {
-            $discount = Data::getDiscountData($discountData);
+        foreach (rpData::getDiscounts() as $discountData) {
+            $discount = rpData::getDiscountData($discountData);
             if (!empty($discount)) {
                 $items[] = self::getItem($discount);
             }
@@ -202,8 +219,8 @@ class RequestMapper
      */
     private static function getItemInfoByTable($orderId, array $post)
     {
-        $itemInfos = array();;
-        $items = Db::getItemsByTable($orderId, $post);
+        $itemInfos = array();
+        $items = rpDb::getItemsByTable($orderId, $post);
         foreach ($items as $item) {
             if ($item['qty'] > 0) {
                 $itemInfos[] = self::getItem($item);
@@ -216,11 +233,11 @@ class RequestMapper
      * Retrieve itemInfo model
      * 
      * @param array $itemData
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     private static function getItem(array $itemData)
     {
-        $item = new ItemInfo();
+        $item = new rpItemInfo();
         $item->setArticleName($itemData['name'])
                 ->setArticleNumber($itemData['id'])
                 ->setQuantity($itemData['qty'])
@@ -235,23 +252,23 @@ class RequestMapper
      * 
      * @param order $order
      * @param int $orderId
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
-    public static function getPaymentInfoModel(order $order, $orderId = null)
+    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array())
     {
-        $paymentInfo = new PaymentInfo();
-        $paymentInfo->setAmount(Data::getPaymentAmount($order, $orderId))->setCurrency($order->info['currency'])
-                ->setMethod(Data::getRpPaymentMethod($order->info['payment_method']));
+        $paymentInfo = new rpPaymentInfo();
+        $paymentInfo->setAmount(rpData::getPaymentAmount($order, $orderId, $post))->setCurrency($order->info['currency'])
+                ->setMethod(rpData::getRpPaymentMethod($order->info['payment_method']));
         if ($order->info['payment_method'] == 'ratepay_rate') {
             if (is_null($orderId)) {
                 $paymentInfo->setDebitType('BANK-TRANSFER')
-                        ->setInstallmentAmount(Session::getRpSessionEntry('ratepay_rate_rate'))
-                        ->setInstallmentNumber(Session::getRpSessionEntry('ratepay_rate_number_of_rates'))
-                        ->setInterestRate(Session::getRpSessionEntry('ratepay_rate_interest_rate'))
-                        ->setLastInstallmentAmount(Session::getRpSessionEntry('ratepay_rate_last_rate'))
-                        ->setPaymentFirstDay(Session::getRpSessionEntry('ratepay_payment_firstday'));
+                        ->setInstallmentAmount(rpSession::getRpSessionEntry('ratepay_rate_rate'))
+                        ->setInstallmentNumber(rpSession::getRpSessionEntry('ratepay_rate_number_of_rates'))
+                        ->setInterestRate(rpSession::getRpSessionEntry('ratepay_rate_interest_rate'))
+                        ->setLastInstallmentAmount(rpSession::getRpSessionEntry('ratepay_rate_last_rate'))
+                        ->setPaymentFirstDay(rpSession::getRpSessionEntry('ratepay_payment_firstday'));
             } else {
-                $details = Db::getRatepayRateDetails($orderId);
+                $details = rpDb::getRatepayRateDetails($orderId);
                 $paymentInfo->setDebitType('BANK-TRANSFER')
                         ->setInstallmentAmount($details['rate'])
                         ->setInstallmentNumber($details['number_of_rates'])

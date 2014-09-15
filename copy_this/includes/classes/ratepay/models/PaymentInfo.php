@@ -19,7 +19,7 @@
 /**
  * PaymentInfo model
  */
-class PaymentInfo
+class rpPaymentInfo
 {
 
     /**
@@ -99,7 +99,7 @@ class PaymentInfo
      * Set method
      * 
      * @param string $method
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setMethod($method)
     {
@@ -122,7 +122,7 @@ class PaymentInfo
      * Set currency
      * 
      * @param string $currency
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setCurrency($currency)
     {
@@ -145,7 +145,7 @@ class PaymentInfo
      * Set amount
      * 
      * @param string $amount
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setAmount($amount)
     {
@@ -168,7 +168,7 @@ class PaymentInfo
      * Set debit type
      * 
      * @param string $debitType
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setDebitType($debitType)
     {
@@ -191,7 +191,7 @@ class PaymentInfo
      * Set installment number
      * 
      * @param string $installmentNumber
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setInstallmentNumber($installmentNumber)
     {
@@ -214,7 +214,7 @@ class PaymentInfo
      * Set installment amount
      * 
      * @param string $installmentAmount
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setInstallmentAmount($installmentAmount)
     {
@@ -237,7 +237,7 @@ class PaymentInfo
      * Set installment amount
      * 
      * @param string $lastInstallmentAmount
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setLastInstallmentAmount($lastInstallmentAmount)
     {
@@ -260,7 +260,7 @@ class PaymentInfo
      * Set interest rate
      * 
      * @param string $interestRate
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setInterestRate($interestRate)
     {
@@ -283,7 +283,7 @@ class PaymentInfo
      * Set payment first day
      * 
      * @param string $paymentFirstDay
-     * @return PaymentInfo
+     * @return rpPaymentInfo
      */
     public function setPaymentFirstDay($paymentFirstDay)
     {

@@ -95,17 +95,19 @@ class CustomerInfo
     /**
      * Billing address info
      * 
-     * @var AddressInfo
+     * @var rpAddressInfo
      */
     private $_billingAddressInfo;
 
     /**
      * Shipping address info
      * 
-     * @var AddressInfo
+     * @var rpAddressInfo
      */
     private $_shippingAddressInfo;
-
+    
+    private $_bankAccount;
+            
     /**
      * Nationality
      * 
@@ -353,7 +355,7 @@ class CustomerInfo
     /**
      * Get billing address
      * 
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function getBillingAddressInfo()
     {
@@ -363,10 +365,10 @@ class CustomerInfo
     /**
      * Set billing address
      * 
-     * @param AddressInfo $billingAddressInfo
+     * @param rpAddressInfo $billingAddressInfo
      * @return CustomerInfo
      */
-    public function setBillingAddressInfo(AddressInfo $billingAddressInfo)
+    public function setBillingAddressInfo(rpAddressInfo $billingAddressInfo)
     {
         $this->_billingAddressInfo = $billingAddressInfo;
 
@@ -376,7 +378,7 @@ class CustomerInfo
     /**
      * Get shipping address
      * 
-     * @return AddressInfo
+     * @return rpAddressInfo
      */
     public function getShippingAddressInfo()
     {
@@ -386,16 +388,26 @@ class CustomerInfo
     /**
      * Set shipping address
      * 
-     * @param AddressInfo $shippingAddressInfo
+     * @param rpAddressInfo $shippingAddressInfo
      * @return CustomerInfo
      */
-    public function setShippingAddressInfo(AddressInfo $shippingAddressInfo)
+    public function setShippingAddressInfo(rpAddressInfo $shippingAddressInfo)
     {
         $this->_shippingAddressInfo = $shippingAddressInfo;
 
         return $this;
     }
+    
+    public function getBankAccount()
+    {
+        return $this->_bankAccount;
+    }
 
+    public function setBankAccount($bankAccount)
+    {
+        $this->_bankAccount = $bankAccount;
+    }
+    
     /**
      * Get nationality
      * 
@@ -462,6 +474,7 @@ class CustomerInfo
             'phone'         => $this->_phone,
             'billing'       => $this->_billingAddressInfo->getData(),
             'shipping'      => $this->_shippingAddressInfo->getData(),
+            'bankAccount'   => isset($this->_bankAccount) ? $this->_bankAccount->getData() : null,
             'nationality'   => $this->_nationality,
             'creditInquiry' => $this->_creditInquiry
         );

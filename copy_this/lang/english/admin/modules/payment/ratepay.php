@@ -78,7 +78,6 @@ define('RATEPAY_RATE_DETAILS_INTEREST_AMOUNT', 'Zinsbetrag');
 define('RATEPAY_RATE_DETAILS_SERVICE_CHARGE', 'Vertragsabschlussgeb&uuml;hr');
 define('RATEPAY_RATE_DETAILS_ANNUAL_INTEREST', 'Effektiver Jahreszins');
 define('RATEPAY_RATE_DETAILS_MONTHLY_INTEREST', 'Sollzinssatz pro Monat');
-define('RATEPAY_RATE_DETAILS_INTEREST', 'Sollzinssatz p.a. (gebunden)');
 define('RATEPAY_RATE_DETAILS_RUNTIME', 'Laufzeit');
 define('RATEPAY_RATE_DETAILS_MONTHLY_RATE_A', 'monatliche Raten a');
 define('RATEPAY_RATE_DETAILS_AMOUNT_LAST_RATE_A', 'zzgl. einer Abschlussrate a');

@@ -120,14 +120,28 @@ class ratepay_rechnung extends ratepay_abstract
      * 
      * @var float
      */
-    public $min;
+    public $minDe;
     
     /**
      * Maximal order amount
      * 
      * @var float
      */
-    public $max;
+    public $maxDe;
+    
+    /**
+     * Minimal order amount
+     * 
+     * @var float
+     */
+    public $minAt;
+    
+    /**
+     * Maximal order amount
+     * 
+     * @var float
+     */
+    public $maxAt;
     
     /**
      * Merchant privacy url
@@ -151,95 +165,16 @@ class ratepay_rechnung extends ratepay_abstract
     public $ratepayPrivacyUrl;
     
     /**
-     * Shop owner
-     * 
-     * @var string
+     * b2b de flag
+     * @var boolan
      */
-    public $shopOwner;
+    public $b2bDe;
     
     /**
-     * Shop HR
-     * 
-     * @var string
+     * b2b at flag
+     * @var boolan
      */
-    public $shopHr;
-    
-    /**
-     * Shop phone
-     * 
-     * @var string
-     */
-    public $shopPhone;
-    
-    /**
-     * Shop fax
-     * 
-     * @var string
-     */
-    public $shopFax;
-    
-    /**
-     * Shop zip code
-     * 
-     * @var string
-     */
-    public $shopZipCode;
-    
-    /**
-     * Shop street
-     * 
-     * @var string
-     */
-    public $shopStreet;
-    
-    /**
-     * Shop court
-     * 
-     * @var string
-     */
-    public $shopCourt;
-    
-    /**
-     * Shop bank name
-     * 
-     * @var string
-     */
-    public $shopBankName;
-    
-    /**
-     * Shop sort code
-     * 
-     * @var string
-     */
-    public $shopSortCode;
-    
-    /**
-     * Shop account number
-     * 
-     * @var string
-     */
-    public $shopAccountNumber;
-    
-    /**
-     * Shop swift
-     * 
-     * @var string
-     */
-    public $shopSwift;
-    
-    /**
-     * Shop iban
-     * 
-     * @var string
-     */
-    public $shopIban;
-    
-    /**
-     * Shop extra field
-     * 
-     * @var string
-     */
-    public $extraInvoiceField;
+    public $b2bAt;
     
     /**
      * This constructor set's all properties for the ratepay_rechnung object
@@ -249,36 +184,38 @@ class ratepay_rechnung extends ratepay_abstract
         global $order;
         
         $this->code               = 'ratepay_rechnung';
-        $this->version            = '2.0.2';
+        $this->version            = '2.1.4';
         $this->shopVersion        = str_replace(' ','',str_replace("xt:Commerce v", "", PROJECT_VERSION));
         $this->shopSystem         = 'xt:Commerce';
         $this->title              = MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT . " (" . $this->version . ")";
         $this->public_title       = MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT_TITLE;
         $this->description        = utf8_decode(MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT_DESCRIPTION);
         $this->enabled            = (MODULE_PAYMENT_RATEPAY_RECHNUNG_STATUS == 'True') ? true : false;
-        $this->profileId          = MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID;
-        $this->securityCode       = MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE;
-        $this->min                = MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN;
-        $this->max                = MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX;
-        $this->merchantGtcUrl     = MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_GTC_URL;
-        $this->merchantPrivacyUrl = MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_PRIVACY_URL;
-        $this->ratepayPrivacyUrl  = MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL;
+        $this->minDe              = MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_DE;
+        $this->maxDe              = MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_DE;
+        $this->minAt              = MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_AT;
+        $this->maxAt              = MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_AT;
+        $this->b2bDe              = (MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE == 'True') ? true : false;
+        $this->b2bAt              = (MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT == 'True') ? true : false;
         $this->sandbox            = (MODULE_PAYMENT_RATEPAY_RECHNUNG_SANDBOX == 'True') ? true : false;
         $this->logging            = (MODULE_PAYMENT_RATEPAY_RECHNUNG_LOGGING == 'True') ? true : false;
-        $this->shopOwner          = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_OWNER;
-        $this->shopHr             = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_HR;
-        $this->shopPhone          = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_FON;
-        $this->shopFax            = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_FAX;
-        $this->shopZipCode        = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_PLZ;
-        $this->shopStreet         = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_STREET;
-        $this->shopCourt          = MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_COURT;
-        $this->shopBankName       = MODULE_PAYMENT_RATEPAY_RECHNUNG_BANK_NAME;
-        $this->shopSortCode       = MODULE_PAYMENT_RATEPAY_RECHNUNG_SORT_CODE;
-        $this->shopAccountNumber  = MODULE_PAYMENT_RATEPAY_RECHNUNG_ACCOUNT_NR;
-        $this->shopSwift          = MODULE_PAYMENT_RATEPAY_RECHNUNG_SWIFT;
-        $this->shopIban           = MODULE_PAYMENT_RATEPAY_RECHNUNG_IBAN;
-        $this->extraInvoiceField  = MODULE_PAYMENT_RATEPAY_RECHNUNG_EXTRA_FIELD;
         $this->sort_order         = MODULE_PAYMENT_RATEPAY_RECHNUNG_SORT_ORDER;
+        
+        $country = $order->billing['country']['iso_code_2'];
+        if (!is_array($order->billing['country'])) {
+            $country = rpSession::getRpSessionEntry('customers_country_code');
+        }
+        
+        if (!is_null(rpSession::getRpSessionEntry('orderId'))) {
+            $country = rpDb::getRatepayOrderDataEntry(rpSession::getRpSessionEntry('orderId'), 'customers_country_code');
+        } 
+        
+        if (!is_null(rpSession::getRpSessionEntry('countryCode'))) {
+            $country = rpSession::getRpSessionEntry('countryCode');
+        }
+        
+        $this->_setCredentials($country);
+        
         if ((int) MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID > 0) {
             $this->order_status = MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID;
         }
@@ -288,6 +225,41 @@ class ratepay_rechnung extends ratepay_abstract
         }
     }
     
+    public function selection()
+    {
+        global $order;
+        $display = parent::selection();
+        
+        if (!is_null($display)) {
+            $minVarName = 'min' . ucfirst(strtolower($order->billing['country']['iso_code_2']));
+            $maxVarName = 'max' . ucfirst(strtolower($order->billing['country']['iso_code_2']));
+
+            $privacy = '';
+            $privacyConstant = 'MODULE_PAYMENT_' . strtoupper($this->code) . '_RATEPAY_PRIVACY_URL_' . strtoupper($order->billing['country']['iso_code_2']);
+            if (defined($privacyConstant)) {
+                $privacy = constant($privacyConstant);
+            }
+            
+            $smarty = new Smarty();
+            $smarty->assign('language', $_SESSION['language']);
+            $smarty->assign('ratepayPrivacyUrl', $privacy);
+            $smarty->assign('RATEPAY_INFO_1', RATEPAY_RECHNUNG_INFO_1);
+            $smarty->assign('RATEPAY_INFO_2', RATEPAY_RECHNUNG_INFO_2);
+            $smarty->assign('RATEPAY_INFO_3', RATEPAY_RECHNUNG_INFO_3);
+
+            $smarty->caching = 0;
+
+            $display['fields'][] = array('title' => '', 'field' => $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_rechnung.html'));
+        }
+        
+        return $display;
+    }
+    
+    public function confirmation()
+    {
+        return false;
+    }
+
     /**
      * Updates the payment status status
      */
@@ -318,14 +290,6 @@ class ratepay_rechnung extends ratepay_abstract
     }
 
     /**
-     * Is called when the checkout_confirmation.php page is called
-     */
-    public function confirmation() 
-    {
-        return false;
-    }
-
-    /**
      * Checks if RatePAY Rechnung is enabled.
      *
      * @return boolean
@@ -345,6 +309,7 @@ class ratepay_rechnung extends ratepay_abstract
      */
     public function install() 
     {
+        $this->_installRatepayPaidState();
         if (xtc_db_num_rows(xtc_db_query("SHOW TABLES LIKE 'ratepay_rechnung_orders'")) == 0) {
             xtc_db_query(
                     "CREATE TABLE `ratepay_rechnung_orders`("
@@ -373,12 +338,12 @@ class ratepay_rechnung extends ratepay_abstract
                   . " `shipped` INT NOT NULL DEFAULT '0',"
                   . " `cancelled` INT NOT NULL DEFAULT '0',"
                   . " `returned` INT NOT NULL DEFAULT '0',"
-                  . " `unit_price` decimal(10,3) NOT NULL DEFAULT '0',"
-                  . " `unit_price_with_tax` decimal(10,3) NOT NULL DEFAULT '0',"
-                  . " `total_price` decimal(10,3) NOT NULL DEFAULT '0',"
-                  . " `total_price_with_tax` decimal(10,3) NOT NULL DEFAULT '0',"
-                  . " `unit_tax` decimal(10,3) NOT NULL DEFAULT '0',"
-                  . " `total_tax` decimal(10,3) NOT NULL DEFAULT '0',"
+                  . " `unit_price` decimal(14,8) NOT NULL DEFAULT '0',"
+                  . " `unit_price_with_tax` decimal(14,8) NOT NULL DEFAULT '0',"
+                  . " `total_price` decimal(10,8) NOT NULL DEFAULT '0',"
+                  . " `total_price_with_tax` decimal(14,8) NOT NULL DEFAULT '0',"
+                  . " `unit_tax` decimal(14,8) NOT NULL DEFAULT '0',"
+                  . " `total_tax` decimal(14,8) NOT NULL DEFAULT '0',"
                   . " PRIMARY KEY  (`id`)"
                   . " ) ENGINE=MyISAM AUTO_INCREMENT=1;"
             );
@@ -428,32 +393,24 @@ class ratepay_rechnung extends ratepay_abstract
             xtc_db_query("ALTER TABLE admin_access ADD ratepay_order_script INT(1) NOT NULL DEFAULT '0'");
             xtc_db_query("ALTER TABLE admin_access ADD ratepay_rechnung_print_order INT(1) NOT NULL DEFAULT '0'");
             xtc_db_query("ALTER TABLE admin_access ADD ratepay_rate_print_order INT(1) NOT NULL DEFAULT '0'");
-            xtc_db_query("UPDATE admin_access SET ratepay_logging = '1', delete_logging = '1', ratepay_log = '1', ratepay_order = '1', ratepay_order_script = '1', ratepay_rechnung_print_order = '1', ratepay_rate_print_order = '1' WHERE customers_id= '1' OR customers_id = 'groups'");
+            xtc_db_query("UPDATE admin_access SET ratepay_logging = '1', delete_logging = '1', ratepay_log = '1', ratepay_order = '1', ratepay_order_script = '1' WHERE customers_id= '1' OR customers_id = 'groups'");
         } 
         
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_STATUS', 'True', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SANDBOX', 'False', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_LOGGING', 'False', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_GTC_URL', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_PRIVACY_URL', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_OWNER', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_HR', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_FON', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_FAX', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_PLZ', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_STREET', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_COURT', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_BANK_NAME', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SORT_CODE', '', '6', '3', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_ACCOUNT_NR', '', '6', '0', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SWIFT', '', '6', '0', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_IBAN', '', '6', '0', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_EXTRA_FIELD', '', '6', '0', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_DE', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_DE', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_AT', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_AT', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_DE', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_DE', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_AT', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_AT', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE', 'True', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT', 'True', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE', '', '6', '3', NOW())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_ZONE', '0', '6', '2', 'xtc_get_zone_class_title', 'xtc_cfg_pull_down_zone_classes(', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_ALLOWED', '', '6', '0', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID', '0', '6', '0', 'xtc_cfg_pull_down_order_statuses(', 'xtc_get_order_status_name', now())");
@@ -479,26 +436,18 @@ class ratepay_rechnung extends ratepay_abstract
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_STATUS',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_SANDBOX',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_LOGGING',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_GTC_URL',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MERCHANT_PRIVACY_URL',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_OWNER',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_HR',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_FON',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_FAX',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_PLZ',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_STREET',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SHOP_COURT',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_BANK_NAME',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SORT_CODE',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_ACCOUNT_NR',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SWIFT',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_IBAN',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_EXTRA_FIELD',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_DE',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_DE',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_PROFILE_ID_AT',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_SECURITY_CODE_AT',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_DE',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_DE',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_AT',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_AT',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE',
+            'MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_ALLOWED',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_ZONE',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID',

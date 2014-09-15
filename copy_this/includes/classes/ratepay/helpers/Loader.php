@@ -21,11 +21,11 @@ require_once('Data.php');
 /**
  * Description of Loader
  */
-class Loader
+class rpLoader
 {
     public static function getRatepayPayment($paymentCode)
     {
-        if (Data::isRatepayPayment($paymentCode)) {
+        if (rpData::isRatepayPayment($paymentCode)) {
             require_once(dirname(__FILE__) . '/../../../modules/payment/' . $paymentCode . '.php');
             return new $paymentCode();
         }

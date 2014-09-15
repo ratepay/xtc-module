@@ -26,10 +26,10 @@ require_once ('../includes/classes/ratepay/helpers/Db.php');
 require_once ('../includes/classes/ratepay/helpers/Session.php');
 require_once ('../includes/classes/ratepay/helpers/Globals.php');
 require_once ('includes/classes/order.php');
-$orderId = Globals::hasParam('oID') ? Globals::getParam('oID') : die('Missing param: "oID"');
+$orderId = rpGlobals::hasParam('oID') ? rpGlobals::getParam('oID') : die('Missing param: "oID"');
 $order = new order($orderId);
 $lang = $_SESSION['language'];
-$basketAmount = Data::getBasketAmount($order, $orderId);
+$basketAmount = rpData::getBasketAmount($order, $orderId);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html <?php echo HTML_PARAMS; ?>>
@@ -69,15 +69,15 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                     <table border="0" width="100%" cellspacing="0" cellpadding="2">
                         <tr>
                             <td>
-                                <?php if (!is_null(Session::getRpSessionEntry('message'))): ?>
+                                <?php if (!is_null(rpSession::getRpSessionEntry('message'))): ?>
                                 <table border="0" width="100%" cellspacing="0" cellpadding="2">
                                     <tr>
                                         <td>
                                             <table border="0" width="100%" cellspacing="0" cellpadding="2">
                                                 <tr>
-                                                    <td class="<?php echo Session::getRpSessionEntry('message_css_class'); ?>">
+                                                    <td class="<?php echo rpSession::getRpSessionEntry('message_css_class'); ?>">
                                                         <img border="0" title="" alt="" src="images/icons/error.gif">
-                                                        <?php echo Session::getRpSessionEntry('message'); ?>
+                                                        <?php echo rpSession::getRpSessionEntry('message'); ?>
                                                     </td>
                                                 </tr>
                                             </table>
@@ -86,7 +86,7 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                 </table>
                                 <?php endif; ?>
                                 <?php if ($order->info['payment_method'] == 'ratepay_rate'): ?>
-                                <?php $details = Db::getRatepayRateDetails($orderId); ?>
+                                <?php $details = rpDb::getRatepayRateDetails($orderId); ?>
                                 <table border="0" width="100%" cellspacing="0" cellpadding="2" height="40">
                                     <tr>
                                         <td class="pageHeading"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_RATE_DETAILS; ?></td>
@@ -104,23 +104,23 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                             <table style="width: 30%">
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_TOTAL_AMOUNT; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['total_amount'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['total_amount'], $lang, $order); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_AMOUNT; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['amount'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['amount'], $lang, $order); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_INTEREST_AMOUNT; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['interest_amount'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['interest_amount'], $lang, $order); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_SERVICE_CHARGE; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['service_charge'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['service_charge'], $lang, $order); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_ANNUAL_INTEREST; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['annual_percentage_rate'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['annual_percentage_rate'], $lang, $order); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_MONTHLY_INTEREST; ?>:</b></td>
@@ -132,11 +132,11 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo $details['number_of_rates'] - 1; ?>&nbsp;<?php echo RATEPAY_RATE_DETAILS_MONTHLY_RATE_A; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['rate'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['rate'], $lang, $order); ?></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="main"><b><?php echo RATEPAY_RATE_DETAILS_AMOUNT_LAST_RATE_A; ?>:</b></td>
-                                                    <td class="main piRpRight"><?php echo Data::getFormattedPrice($details['last_rate'], $lang, $order); ?></td>
+                                                    <td class="main piRpRight"><?php echo rpData::getFormattedPrice($details['last_rate'], $lang, $order); ?></td>
                                                 </tr>
                                             </table>
                                         </td>
@@ -174,17 +174,17 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_CANCELED; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_RETURNED; ?></th>
                                                     </tr>
-                                                    <?php foreach (Db::getRpItems($orderId) as $item): ?>
+                                                    <?php foreach (rpDb::getRpItems($orderId) as $item): ?>
                                                     <tr class="dataTableRow">
                                                         <td class="dataTableContent">
-                                                            <?php $qty = Data::getAvailableItemQtyToShipOrCancel($item); ?>
+                                                            <?php $qty = rpData::getAvailableItemQtyToShipOrCancel($item); ?>
                                                             <input <?php if ($qty <= 0): echo 'readonly="readonly"'; endif; ?> type="text" name="items[<?php echo $item['id']; ?>]" value="<?php echo $qty;?>" onKeyUp="RpOrder.check(this, <?php echo $qty; ?>);" onFocus="this.select();" size="3"/>
                                                         </td>
                                                         <td class="dataTableContent"><?php echo $item['articleNumber']; ?></td>
                                                         <td class="dataTableContent"><?php echo $item['articleName']; ?></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo Data::getFormattedPrice($item['unitPrice'], $lang, $order); ?></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo Data::getFormattedPrice($item['totalTax'], $lang, $order); ?></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo Data::getFormattedPrice($item['totalPriceWithTax'], $lang, $order); ?></td>
+                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($item['unitPrice'], $lang, $order); ?></td>
+                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($item['totalTax'], $lang, $order); ?></td>
+                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($item['totalPriceWithTax'], $lang, $order); ?></td>
                                                         <td class="dataTableContent piRpRight"><?php echo $item['ordered']; ?></td>
                                                         <td class="dataTableContent piRpRight"><?php echo $item['shipped']; ?></td>
                                                         <td class="dataTableContent piRpRight"><?php echo $item['cancelled']; ?></td>
@@ -197,7 +197,7 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo Data::getFormattedPrice($basketAmount, $lang, $order); ?></td>
+                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($basketAmount, $lang, $order); ?></td>
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
@@ -235,10 +235,10 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERED; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_RETURNED; ?></th>
                                                     </tr>
-                                                    <?php foreach (Db::getRpItems($orderId) as $item): ?>
+                                                    <?php foreach (rpDb::getRpItems($orderId) as $item): ?>
                                                     <tr class="dataTableRow">
                                                         <td class="dataTableContent">
-                                                            <?php $qty = Data::getAvailableItemQtyToRefund($item); ?>
+                                                            <?php $qty = rpData::getAvailableItemQtyToRefund($item); ?>
                                                             <input <?php if ($qty <= 0): echo 'disabled="disabled"'; endif; ?> type="text" name="items[<?php echo $item['id']; ?>]" value="<?php echo $qty; ?>" onKeyUp="RpOrder.check(this, <?php echo $qty; ?>);" onFocus="this.select();" size="3"/>
                                                         </td>
                                                         <td class="dataTableContent"><?php echo $item['articleNumber']; ?></td>
@@ -303,7 +303,7 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
                                                     <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_ACTION; ?></th>
                                                     <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DATE; ?></th>
                                                 </tr>
-                                                <?php foreach (Db::getRpHistory($orderId) as $entry): ?>
+                                                <?php foreach (rpDb::getRpHistory($orderId) as $entry): ?>
                                                 <tr class="dataTableRow">
                                                     <td class="dataTableContent"><?php echo $entry['quantity']; ?></td>
                                                     <td class="dataTableContent"><?php echo $entry['article_number']; ?></td>
@@ -330,4 +330,4 @@ $basketAmount = Data::getBasketAmount($order, $orderId);
     </body>
 </html>
 <?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>
-<?php Session::cleanRpSession(); ?>
+<?php rpSession::cleanRpSession(); ?>

@@ -19,7 +19,7 @@
 /**
  * BasketInfo model
  */
-class BasketInfo
+class rpBasketInfo
 {
 
     /**
@@ -57,7 +57,7 @@ class BasketInfo
      * Set amount
      * 
      * @param string $amount
-     * @return BasketInfo
+     * @return rpBasketInfo
      */
     public function setAmount($amount)
     {
@@ -80,7 +80,7 @@ class BasketInfo
      * Set currency
      * 
      * @param string $currency
-     * @return BasketInfo
+     * @return rpBasketInfo
      */
     public function setCurrency($currency)
     {
@@ -103,7 +103,7 @@ class BasketInfo
      * Set items
      * 
      * @param array $items
-     * @return BasketInfo
+     * @return rpBasketInfo
      */
     public function setItems(array $items)
     {

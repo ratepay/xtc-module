@@ -8,7 +8,7 @@
  * @package pi_ratepay_rate_calculator
  * Code by PayIntelligent GmbH  <http://www.payintelligent.de/>
  */
-class SimpleXMLExtended extends SimpleXMLElement
+class rpSimpleXmlExtended extends SimpleXMLElement
 {
     /*
      * This method add a new child element with a cdata tag arround to a SimpleXMLExtended object

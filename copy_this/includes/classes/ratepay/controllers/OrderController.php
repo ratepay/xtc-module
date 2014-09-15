@@ -17,7 +17,7 @@
  */
 
 require_once('includes/classes/order.php');
-require_once(dirname(__FILE__) . '/../../../../lang/' . Session::getLang() . '/admin/modules/payment/ratepay.php');
+require_once(dirname(__FILE__) . '/../../../../lang/' . rpSession::getLang() . '/admin/modules/payment/ratepay.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/mappers/RequestMapper.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/helpers/Data.php');
 require_once(dirname(__FILE__) . '/../../../classes/ratepay/helpers/Db.php');
@@ -28,35 +28,35 @@ require_once(dirname(__FILE__) . '/../../../classes/ratepay/helpers/Loader.php')
 /**
  * Order controller
  */
-class OrderController
+class rpOrderController
 {
     /**
      * Call CONFIRMATION_DELIVER and updates order and item data
      */
     public static function deliverAction()
     {
-        $post = Globals::getPost();
-        $orderId = Globals::getPostEntry('order_number');
+        $post = rpGlobals::getPost();
+        $orderId = rpGlobals::getPostEntry('order_number');
         $order = new order($orderId);
-        $payment = Loader::getRatepayPayment($order->info['payment_method']);
-        $transactionId = Db::getRatepayOrderDataEntry($orderId, 'transaction_id');
-        $transactionShortId = Db::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
-        $subType = Data::isFullDeliver(self::getDeliverPostData($post), $orderId) ? 'full-deliver' : 'partial-deliver';
+        $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
+        $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
+        $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
+        $subType = rpData::isFullDeliver(self::getDeliverPostData($post), $orderId) ? 'full-deliver' : 'partial-deliver';
         $data = array(
-            'HeadInfo'   => RequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
-            'BasketInfo' => RequestMapper::getBasketInfoModel($order, $orderId, self::getDeliverPostData($post))
+            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
+            'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getDeliverPostData($post))
         );
-        $requestService = new RequestService($payment->sandbox, $data);
+        $requestService = new rpRequestService($payment->sandbox, $data);
         $result = $requestService->callConfirmationDeliver();
-        Db::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
         if (!array_key_exists('error', $result)) {
-            Session::setRpSessionEntry('message_css_class', 'messageStackSuccess');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_DELIVER_SUCCESS);
-            Db::shipRpOrder(self::getDeliverPostData($post), $order);
-            Db::setRpHistoryEntrys($post, 'CONFIRMATION_DELIVER', $subType);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackSuccess');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_DELIVER_SUCCESS);
+            rpDb::shipRpOrder(self::getDeliverPostData($post), $order);
+            rpDb::setRpHistoryEntrys($post, 'CONFIRMATION_DELIVER', $subType);
         } else {
-            Session::setRpSessionEntry('message_css_class', 'messageStackError');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_DELIVER_ERROR);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackError');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_DELIVER_ERROR);
         }
         
         xtc_redirect(xtc_href_link("ratepay_order.php", 'oID=' . $orderId, 'SSL'));
@@ -68,32 +68,32 @@ class OrderController
      */
     public static function cancelAction()
     {
-        $post = Globals::getPost();
-        $orderId = Globals::getPostEntry('order_number');
+        $post = rpGlobals::getPost();
+        $orderId = rpGlobals::getPostEntry('order_number');
         $order = new order($orderId);
-        $payment = Loader::getRatepayPayment($order->info['payment_method']);
-        $transactionId = Db::getRatepayOrderDataEntry($orderId, 'transaction_id');
-        $transactionShortId = Db::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
-        $subType = Data::isFullCancel(self::getCancelPostData($post), $orderId) ? 'full-cancellation' : 'partial-cancellation';
+        $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
+        $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
+        $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
+        $subType = rpData::isFullCancel(self::getCancelPostData($post), $orderId) ? 'full-cancellation' : 'partial-cancellation';
         $data = array(
-            'HeadInfo'   => RequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
-            'BasketInfo' => RequestMapper::getBasketInfoModel($order, $orderId, self::getCancelPostData($post)),
-            'CustomerInfo' => RequestMapper::getCustomerInfoModel($order, $orderId),
-            'PaymentInfo' => RequestMapper::getPaymentInfoModel($order, $orderId)
+            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
+            'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getCancelPostData($post)),
+            'CustomerInfo' => rpRequestMapper::getCustomerInfoModel($order, $orderId),
+            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, self::getCancelPostData($post))
         );
-        $requestService = new RequestService($payment->sandbox, $data);
+        $requestService = new rpRequestService($payment->sandbox, $data);
         $result = $requestService->callPaymentChange();
-        Db::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
         if ($result) {
-            Session::setRpSessionEntry('message_css_class', 'messageStackSuccess');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CANCEL_SUCCESS);
-            Db::cancelRpOrder(self::getCancelPostData($post), $order);
-            Db::setRpHistoryEntrys($post, 'PAYMENT_CHANGE', $subType);
-            Db::cancelOrRefundShopItems($post, $orderId);
-            Db::updateShopOrderTotals($orderId);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackSuccess');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CANCEL_SUCCESS);
+            rpDb::cancelRpOrder(self::getCancelPostData($post), $order);
+            rpDb::setRpHistoryEntrys($post, 'PAYMENT_CHANGE', $subType);
+            rpDb::cancelOrRefundShopItems($post, $orderId);
+            rpDb::updateShopOrderTotals($orderId);
         } else {
-            Session::setRpSessionEntry('message_css_class', 'messageStackError');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CANCEL_ERROR);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackError');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CANCEL_ERROR);
         }
         
         xtc_redirect(xtc_href_link("ratepay_order.php", 'oID=' . $orderId, 'SSL'));
@@ -105,32 +105,32 @@ class OrderController
      */
     public static function refundAction()
     {
-        $post = Globals::getPost();
-        $orderId = Globals::getPostEntry('order_number');
+        $post = rpGlobals::getPost();
+        $orderId = rpGlobals::getPostEntry('order_number');
         $order = new order($orderId);
-        $payment = Loader::getRatepayPayment($order->info['payment_method']);
-        $transactionId = Db::getRatepayOrderDataEntry($orderId, 'transaction_id');
-        $transactionShortId = Db::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
-        $subType = Data::isFullReturn(self::getRefundPostData($post), $orderId) ? 'full-return' : 'partial-return';
+        $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
+        $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
+        $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
+        $subType = rpData::isFullReturn(self::getRefundPostData($post), $orderId) ? 'full-return' : 'partial-return';
         $data = array(
-            'HeadInfo'   => RequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
-            'BasketInfo' => RequestMapper::getBasketInfoModel($order, $orderId, self::getRefundPostData($post)),
-            'CustomerInfo' => RequestMapper::getCustomerInfoModel($order, $orderId),
-            'PaymentInfo' => RequestMapper::getPaymentInfoModel($order, $orderId)
+            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
+            'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getRefundPostData($post)),
+            'CustomerInfo' => rpRequestMapper::getCustomerInfoModel($order, $orderId),
+            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, self::getRefundPostData($post))
         );
-        $requestService = new RequestService($payment->sandbox, $data);
+        $requestService = new rpRequestService($payment->sandbox, $data);
         $result = $requestService->callPaymentChange();
-        Db::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
         if (!array_key_exists('error', $result)) {
-            Session::setRpSessionEntry('message_css_class', 'messageStackSuccess');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_SUCCESS);
-            Db::refundRpOrder(self::getRefundPostData($post), $order);
-            Db::setRpHistoryEntrys($post, 'PAYMENT_CHANGE', $subType);
-            Db::cancelOrRefundShopItems($post, $orderId);
-            Db::updateShopOrderTotals($orderId);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackSuccess');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_SUCCESS);
+            rpDb::refundRpOrder(self::getRefundPostData($post), $order);
+            rpDb::setRpHistoryEntrys($post, 'PAYMENT_CHANGE', $subType);
+            rpDb::cancelOrRefundShopItems($post, $orderId);
+            rpDb::updateShopOrderTotals($orderId);
         } else {
-            Session::setRpSessionEntry('message_css_class', 'messageStackError');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_ERROR);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackError');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_ERROR);
         }
         
         xtc_redirect(xtc_href_link("ratepay_order.php", 'oID=' . $orderId, 'SSL'));
@@ -142,30 +142,30 @@ class OrderController
      */
     public static function creditAction()
     {
-        $orderId = Globals::getPostEntry('order_number');
+        $orderId = rpGlobals::getPostEntry('order_number');
         $order = new order($orderId);
-        $payment = Loader::getRatepayPayment($order->info['payment_method']);
-        $transactionId = Db::getRatepayOrderDataEntry($orderId, 'transaction_id');
-        $transactionShortId = Db::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
+        $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
+        $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
+        $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
         $data = array(
-            'HeadInfo'   => RequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, 'credit'),
-            'BasketInfo' => RequestMapper::getBasketInfoModel($order, $orderId, Globals::getPost()),
-            'CustomerInfo' => RequestMapper::getCustomerInfoModel($order, $orderId),
-            'PaymentInfo' => RequestMapper::getPaymentInfoModel($order, $orderId)
+            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, 'credit'),
+            'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, rpGlobals::getPost()),
+            'CustomerInfo' => rpRequestMapper::getCustomerInfoModel($order, $orderId),
+            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, rpGlobals::getPost())
         );
-        $requestService = new RequestService($payment->sandbox, $data);
+        $requestService = new rpRequestService($payment->sandbox, $data);
         $result = $requestService->callPaymentChange();
-        Db::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
+        rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
         if (!array_key_exists('error', $result)) {
-            Session::setRpSessionEntry('message_css_class', 'messageStackSuccess');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CREDIT_SUCCESS);
-            Db::setRpCreditItem(Globals::getPost());
-            Db::setRpHistoryEntry($orderId, Data::getCreditItem(Globals::getPost()), 'PAYMENT_CHANGE', 'credit');
-            Db::addCreditToShop($orderId, Globals::getPost());
-            Db::updateShopOrderTotals($orderId);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackSuccess');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CREDIT_SUCCESS);
+            rpDb::setRpCreditItem(rpGlobals::getPost());
+            rpDb::setRpHistoryEntry($orderId, rpData::getCreditItem(rpGlobals::getPost()), 'PAYMENT_CHANGE', 'credit');
+            rpDb::addCreditToShop($orderId, rpGlobals::getPost());
+            rpDb::updateShopOrderTotals($orderId);
         } else {
-            Session::setRpSessionEntry('message_css_class', 'messageStackError');
-            Session::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CREDIT_ERROR);
+            rpSession::setRpSessionEntry('message_css_class', 'messageStackError');
+            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_CREDIT_ERROR);
         }
         
         xtc_redirect(xtc_href_link("ratepay_order.php", 'oID=' . $orderId, 'SSL'));

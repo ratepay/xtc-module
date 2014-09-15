@@ -23,15 +23,15 @@ require_once ('includes/application_top.php');
 require_once ('../includes/classes/ratepay/helpers/Data.php');
 require_once ('../includes/classes/ratepay/helpers/Globals.php');
 require_once ('../includes/classes/ratepay/controllers/OrderController.php');
-if (Globals::hasPostEntry('order_number')) {
-    if (Globals::hasPostEntry('ship')) {
-        OrderController::deliverAction();
-    } elseif (Globals::hasPostEntry('cancel')) {
-        OrderController::cancelAction();
-    } elseif (Globals::hasPostEntry('refund')) {
-        OrderController::refundAction();
-    } elseif(Globals::hasPostEntry('credit')){
-        OrderController::creditAction();
+if (rpGlobals::hasPostEntry('order_number')) {
+    if (rpGlobals::hasPostEntry('ship')) {
+        rpOrderController::deliverAction();
+    } elseif (rpGlobals::hasPostEntry('cancel')) {
+        rpOrderController::cancelAction();
+    } elseif (rpGlobals::hasPostEntry('refund')) {
+        rpOrderController::refundAction();
+    } elseif(rpGlobals::hasPostEntry('credit')){
+        rpOrderController::creditAction();
     } else {
         die('Operation not found!');
     }

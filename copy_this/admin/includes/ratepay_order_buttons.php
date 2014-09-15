@@ -15,27 +15,20 @@
  * @copyright (C) 2012 PayIntelligent GmbH  <http://www.payintelligent.de/>
  * @license   GPLv2
  */
+
+
+
 /**
  * Include script to extend the admin order overview with some RatPAY specific buttons
  */
-if (CURRENT_TEMPLATE == 'xtc5') {
-    if ($oInfo->payment_method == 'ratepay_rechnung' || $oInfo->payment_method == 'ratepay_rate') {
+if ($oInfo->payment_method == 'ratepay_rechnung' || $oInfo->payment_method == 'ratepay_rate' || $oInfo->payment_method == 'ratepay_sepa') {
+    if (preg_match('/modified/', strtolower(PROJECT_VERSION))) {
         $contents[] = array(
             'align' => 'center',
             'text' => '<a class="button" href="' . xtc_href_link('ratepay_order.php', 'oID=' . $oInfo->orders_id) . '">RatePAY</a>');
-        $contents[] = array(
-            'align' => 'center',
-            'text' => '<a class="button" href="' . xtc_href_link($oInfo->payment_method . '_print_order.php', 'oID=' . $oInfo->orders_id) . '" target="_blanc">RatePAY Rechnung</a>');
-    }
-}
-if ($oInfo->payment_method == 'ratepay_rechnung' || $oInfo->payment_method == 'ratepay_rate') {
-    if (CURRENT_TEMPLATE == 'xtc4') {
+    } else {
         $contents[] = array(
             'align' => 'center',
             'text' => '<a class="button" href="' . xtc_href_link('ratepay_order.php', 'oID=' . $oInfo->orders_id) . '">RatePAY</a>');
-        $contents[] = array(
-            'align' => 'center',
-            'text' => '<a class="button" href="' . xtc_href_link($oInfo->payment_method . '_print_order.php', 'oID=' . $oInfo->orders_id) . '" target="_blank">RatePAY Rechnung</a>');
     }
 }
-

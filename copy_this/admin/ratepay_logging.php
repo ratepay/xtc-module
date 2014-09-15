@@ -24,8 +24,8 @@ require_once ('../lang/' . $_SESSION['language'] . '/admin/modules/payment/ratep
 require_once ('../includes/classes/ratepay/helpers/Data.php');
 require_once ('../includes/classes/ratepay/helpers/Db.php');
 require_once ('../includes/classes/ratepay/helpers/Globals.php');
-$logs = Globals::hasParam('orderby') ? Db::getLogEntrys(Globals::getParam('orderby')) : Db::getLogEntrys();
-$logical = Data::getLoggingLogical();
+$logs = rpGlobals::hasParam('orderby') ? rpDb::getLogEntrys(rpGlobals::getParam('orderby')) : rpDb::getLogEntrys();
+$logical = rpData::getLoggingLogical();
 ?>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
 <script language="javascript" src="includes/general.js"></script>
@@ -60,7 +60,7 @@ $logical = Data::getLoggingLogical();
                         </table>
                     </td>
                 </tr>
-                <?php if (Globals::hasParam('success')): ?>
+                <?php if (rpGlobals::hasParam('success')): ?>
                 <tr>
                     <td class="messageStackSuccess">
                         <img border="0" title="" alt="" src="images/icons/success.gif">
@@ -102,13 +102,13 @@ $logical = Data::getLoggingLogical();
                                 <td class="dataTableContent"><?php echo $log['id']; ?></td>
                                 <td class="dataTableContent"><?php echo $log['order_number']; ?></td>
                                 <td class="dataTableContent"><?php echo $log['transaction_id']; ?></td>
-                                <td class="dataTableContent"><?php echo Data::getFullName($log['order_number']); ?></td>
+                                <td class="dataTableContent"><?php echo rpData::getFullName($log['order_number']); ?></td>
                                 <td class="dataTableContent"><?php echo $log['payment_method']; ?></td>
                                 <td class="dataTableContent"><?php echo $log['payment_type']; ?></td>
                                 <td class="dataTableContent"><?php echo $log['payment_subtype']; ?></td>
                                 <td class="dataTableContent"><?php echo $log['result']; ?></td>
                                 <td class="dataTableContent"><?php echo $log['result_code']; ?></td>
-                                <td class="dataTableContent"><?php echo Data::getRpResult($log['result']); ?></td>
+                                <td class="dataTableContent"><?php echo rpData::getRpResult($log['result']); ?></td>
                                 <td class="dataTableContent"><?php echo $log['reason']; ?></td>
                                 <td class="dataTableContent" style="text-align: center;"><a href="<?php echo xtc_href_link('ratepay_log.php', 'id=' . $log['id']) ?>"><b>XML</b></a></td>
                                 <td class="dataTableContent"><?php echo $log['date']; ?></td>

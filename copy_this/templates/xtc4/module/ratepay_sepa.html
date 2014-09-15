@@ -1,0 +1,74 @@
+
+<!--
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * @category  PayIntelligent
+ * @package   ratepay
+ * @copyright (C) 2012 PayIntelligent GmbH  <http://www.payintelligent.de/>
+ * @license   GPLv2
+ */ 
+-->
+
+<style>
+{literal}
+    .piRpConditionLink 
+    {
+        text-decoration: underline;
+        color: #1E7EC8;
+    }
+{/literal}
+</style>
+
+<div>
+    <div>{$RATEPAY_DATA_1}</div>
+    <div>{$RATEPAY_DATA_2}</div>
+    <div>{$RATEPAY_DATA_3}</div>
+</div>
+
+<div>
+    <div>
+        <small>{$RATEPAY_ACCOUNT_HOLDER}</small>
+    </div>
+    <input type="text" name="rp-account-holder" value="{$bankData.owner}"/>
+    <div>
+        <small>{$RATEPAY_ACCOUNT_NUMBER}</small>
+    </div>
+    <input type="text" name="rp-account-number" value="{$bankData.accountnumber}"/>
+    <div>
+        <small>{$RATEPAY_ACCOUNT_SORT_CODE}</small>
+    </div>
+    <input type="text" name="rp-sort-code" value="{$bankData.bankcode}"/>
+    <div>
+        <small>{$RATEPAY_ACCOUNT_BANK_NAME}</small>
+    </div>
+    <input type="text" name="rp-bank-name" value="{$bankData.bankname}"/>
+</div>
+
+<p>
+    <div style="float:left; margin-top: 15px; height: 50px;">
+        <input id="ratepay_sepa_conditions" type="checkbox" name="ratepay_sepa_conditions" value="ratepay-sepa-conditions"/>
+    </div>
+
+    <div style="right; height: 50px;">
+        {$RATEPAY_INFO_1}
+        <a href="{$ratepayPrivacyUrl}" target="_blank" class="piRpConditionLink">{$RATEPAY_INFO_2}</a>
+        {$RATEPAY_INFO_3}
+    </div>
+</p>
+
+<div style="clear: both;">
+    <small>
+        <p>{$RATEPAY_INFO_4}</p>
+        <div>{$RATEPAY_INFO_5}</div>
+        <div>{$RATEPAY_INFO_6}</div>
+        <div>{$RATEPAY_INFO_7}</div>
+    </small>
+</div>

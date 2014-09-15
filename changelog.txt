@@ -1,39 +1,32 @@
-***********************************************************
-**********| Version 2.0.2 - Released 2013-12-16 |**********
-***********************************************************
+## RatePAY xt:Commerce
 
-* fixed rate payment checkout bug
-* superficial changes in rate calculator
+# Version 2.1.4
+ * change ratecalculator entry from monthly-debit-interest to interest-rate
 
-***********************************************************
-**********| Version 2.0.1 - Released 0000-00-00 |**********
-***********************************************************
+# Version 2.1.3
+ * Offer RatePAY payments only customers older than 18 years
 
-* new 2.x.x release
+# Version 2.1.2
+ * better way to check the shopsystem for snippet includes
+ * text change declining text
+ 
 
-***********************************************************
-**********| Version 1.0.1 - Released 2012-05-30 |**********
-***********************************************************
+## RatePAY xt:Commerce
 
-* Fix wrong encoded string in the requests
+# Version 2.1.1
+ * prefixes for all classes
+ * fix installation
 
-***********************************************************
-**********| Version 1.0.0 - Released 2012-01-05 |**********
-***********************************************************
- - New payment method RatePAY Rate
- - Shopping basket amount over 1000 euro will now send correctly
- - Taxes for shipping will now delivered
- - Taxes for coupons will now delivered
+# Version 2.1.0
+ * different credentials for at and de
+ * different min and max values for de and at
+ * different ratepay zgb and dse for at and de
+ * new order state RatePAY [paid]
+ * elv/sepa added
+ * remove Ratepay extra steps
+ * bugfix articlenumbers
+ * better price rounding
+ * text changes
 
-***********************************************************
-**********| Version 0.8.4 - Released 2011-12-02 |**********
-***********************************************************
-
-- Fixed Voucher Bugs
-- Fixed Cancellation Bug
-- Added Loggingcolumns
-- Changed Logging Functionality
-- Fixed Descriptor Bug
-- Fixed Datebug on Invoice
-
-
+# Version 2.0.0
+ * rewrite

@@ -1,0 +1,46 @@
+
+<!--
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * @category  PayIntelligent
+ * @package   ratepay
+ * @copyright (C) 2012 PayIntelligent GmbH  <http://www.payintelligent.de/>
+ * @license   GPLv2
+ */ 
+-->
+
+<style>
+{literal}
+    .piRpConditionLink 
+    {
+        text-decoration: underline;
+        color: #1E7EC8;
+    }
+{/literal}
+</style>
+<table>
+    <tr>
+        <td colspan='2'>
+            <table>
+                <tr>
+                    <td class="piRpCheckbox">
+                        <input id="ratepay_rechnung_conditions" type="checkbox" name="ratepay_rechnung_conditions" value="ratepay-rechnung-conditions"/>
+                    </td>
+                    <td>
+                        {$RATEPAY_INFO_1}
+                        <a href="{$ratepayPrivacyUrl}" target="_blank" class="piRpConditionLink">{$RATEPAY_INFO_2}</a>
+                        {$RATEPAY_INFO_3}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

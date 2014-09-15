@@ -22,8 +22,8 @@
 require_once('includes/application_top.php');
 require_once ('../includes/classes/ratepay/helpers/Data.php');
 require_once ('../includes/classes/ratepay/helpers/Globals.php');
-if (Globals::hasPostEntry('submit')) {
-    $days = Globals::getPostEntry('days');
+if (rpGlobals::hasPostEntry('submit')) {
+    $days = rpGlobals::getPostEntry('days');
     if (preg_match("/^[0-9]{1,2}$/", $days)) {
         if ($days == 0) {
             xtc_db_query("delete from ratepay_log");

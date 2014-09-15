@@ -24,7 +24,7 @@ require_once ('../lang/' . $_SESSION['language'] . '/admin/modules/payment/ratep
 require_once ('../includes/classes/ratepay/helpers/Data.php');
 require_once ('../includes/classes/ratepay/helpers/Db.php');
 require_once ('../includes/classes/ratepay/helpers/Globals.php');
-Globals::hasParam('id') ? $log = Db::getLogEntry(Globals::getParam('id')) : die('Page not allowed!');
+rpGlobals::hasParam('id') ? $log = rpDb::getLogEntry(rpGlobals::getParam('id')) : die('Page not allowed!');
 ?>
 <link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
 <script language="javascript" src="includes/general.js"></script>
@@ -69,7 +69,7 @@ Globals::hasParam('id') ? $log = Db::getLogEntry(Globals::getParam('id')) : die(
                             <tr>
                                 <td style="text-align: center;">
                                     <textarea style="width: 600px; height: 500px;">
-                                        <?php echo Data::addXmlLineBreak(htmlentities($log['request'])); ?>
+                                        <?php echo rpData::addXmlLineBreak(htmlentities($log['request'])); ?>
                                     </textarea>
                                 </td>
                             </tr>
@@ -82,7 +82,7 @@ Globals::hasParam('id') ? $log = Db::getLogEntry(Globals::getParam('id')) : die(
                             <tr>
                                 <td style="text-align: center;">
                                     <textarea style="width: 600px; height: 500px;">
-                                        <?php echo Data::addXmlLineBreak(htmlentities($log['response'])); ?>
+                                        <?php echo rpData::addXmlLineBreak(htmlentities($log['response'])); ?>
                                     </textarea>
                                 </td>
                             </tr>

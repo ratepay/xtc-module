@@ -124,7 +124,7 @@ if ($pi_calculator->getErrorMsg() != '') {
         <tr class="piTableHr">
             <td>
                 <div class="piRpInfoImgDiv"><img onMouseOver="piMouseOver('piRpMouseoverInfoDebitRate')" onMouseOut="piMouseOut('piRpMouseoverInfoDebitRate')" class="piRpInfoImg" src="<?php echo $pi_ratepay_rate_calc_path; ?>images/info-icon.png" /></div>
-                <div class="piRpFloatLeft"><?php echo $pi_lang_interest_rate; ?>:</div>
+                <div class="piRpFloatLeft"><?php echo $pi_lang_debit_rate; ?>:</div>
                 <div class="piRpRelativePosition">
                     <div class="piRpMouseoverInfo" id="piRpMouseoverInfoDebitRate"><?php echo $pi_lang_mouseover_debit_rate; ?></div>
                 </div>

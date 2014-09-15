@@ -19,7 +19,7 @@
 /**
  * ItemInfo model
  */
-class ItemInfo
+class rpItemInfo
 {
 
     /**
@@ -78,7 +78,7 @@ class ItemInfo
      * Set article name
      * 
      * @param string $articleName
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     public function setArticleName($articleName)
     {
@@ -101,7 +101,7 @@ class ItemInfo
      * Set article number
      * 
      * @param string $articleNumber
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     public function setArticleNumber($articleNumber)
     {
@@ -124,7 +124,7 @@ class ItemInfo
      * Set quantity
      * 
      * @param string $quantity
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     public function setQuantity($quantity)
     {
@@ -147,7 +147,7 @@ class ItemInfo
      * Set unit price
      * 
      * @param string $unitPrice
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     public function setUnitPrice($unitPrice)
     {
@@ -170,7 +170,7 @@ class ItemInfo
      * Set total price
      * 
      * @param string $totalPrice
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     public function setTotalPrice($totalPrice)
     {
@@ -193,7 +193,7 @@ class ItemInfo
      * Set tax
      * 
      * @param string $tax
-     * @return ItemInfo
+     * @return rpItemInfo
      */
     public function setTax($tax)
     {

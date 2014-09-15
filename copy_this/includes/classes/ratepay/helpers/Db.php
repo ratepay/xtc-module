@@ -11,7 +11,7 @@ require_once('Session.php');
 /**
  * Description of Db
  */
-class Db
+class rpDb
 {
 
     /**
@@ -145,13 +145,13 @@ class Db
                 . "gender"
                 . ") VALUES ('"
                 . xtc_db_input($orderId) . "', '"
-                . xtc_db_input(Session::getRpSessionEntry('transactionId')) . "', '"
-                . xtc_db_input(Session::getRpSessionEntry('transactionShortId')) . "','"
-                . xtc_db_input(Session::getRpSessionEntry('descriptor')) . "','"
-                . xtc_db_input(Db::getCustomersDob(null, Session::getSessionEntry('customer_id'))) . "','"
-                . xtc_db_input(Db::getCustomersFax(null, Session::getSessionEntry('customer_id'))) . "','"
-                . xtc_db_input(Session::getRpSessionEntry('customers_country_code')) . "','"
-                . xtc_db_input(Db::getXtCustomerEntry(Session::getSessionEntry('customer_id'), 'customers_gender'))
+                . xtc_db_input(rpSession::getRpSessionEntry('transactionId')) . "', '"
+                . xtc_db_input(rpSession::getRpSessionEntry('transactionShortId')) . "','"
+                . xtc_db_input(rpSession::getRpSessionEntry('descriptor')) . "','"
+                . xtc_db_input(rpDb::getCustomersDob(null, rpSession::getSessionEntry('customer_id'))) . "','"
+                . xtc_db_input(rpDb::getCustomersFax(null, rpSession::getSessionEntry('customer_id'))) . "','"
+                . xtc_db_input(rpSession::getRpSessionEntry('customers_country_code')) . "','"
+                . xtc_db_input(rpDb::getXtCustomerEntry(rpSession::getSessionEntry('customer_id'), 'customers_gender'))
                 . "')";
         xtc_db_query($sql);
 
@@ -457,15 +457,15 @@ class Db
     public static function updateShopOrderTotals($orderId)
     {
         $order = new order($orderId);
-        $total = Data::getBasketAmount($order, $orderId);
+        $total = rpData::getBasketAmount($order, $orderId);
         $sql = "UPDATE orders_total SET value = " . (float) $total . " WHERE class = 'ot_total' AND orders_id = '" . xtc_db_input($orderId) . "'";
         xtc_db_query($sql);
 
-        $tax = Data::getTotalTaxAmount($orderId);
+        $tax = rpData::getTotalTaxAmount($orderId);
         $sql = "UPDATE orders_total SET value = " . (float) $tax . " WHERE class = 'ot_tax' AND orders_id = '" . xtc_db_input($orderId) . "'";
         xtc_db_query($sql);
 
-        $subtotal = Data::getSubtotal($orderId);
+        $subtotal = rpData::getSubtotal($orderId);
         $sql = "UPDATE orders_total SET value = " . (float) $subtotal . " WHERE class = 'ot_subtotal' and orders_id = '" . xtc_db_input($orderId) . "'";
         xtc_db_query($sql);
 
@@ -474,9 +474,9 @@ class Db
             $sql = "SELECT value from orders_total WHERE orders_id = '" . xtc_db_input($orderId) . "' and class = '$class'";
             $query = xtc_db_query($sql);
             $entry = xtc_db_fetch_array($query);
-            $text = Data::getFormattedPrice($entry['value'], $order->info['language'], $order);
+            $text = rpData::getFormattedPrice($entry['value'], $order->info['language'], $order);
             if($class == 'ot_total') {
-                $text = "<b>" . Data::getFormattedPrice($entry['value'], $order->info['language'], $order) . "</b>";
+                $text = "<b>" . rpData::getFormattedPrice($entry['value'], $order->info['language'], $order) . "</b>";
             }
             $sql = "UPDATE orders_total SET text = '$text' WHERE orders_id = '" . xtc_db_input($orderId) . "' and class = '$class'";
             xtc_db_query($sql);
@@ -492,7 +492,7 @@ class Db
     public static function addCreditToShop($orderId, array $post)
     {
         $order = new order($orderId);
-        $credit = Data::getCreditItem($post);
+        $credit = rpData::getCreditItem($post);
         $sql = "INSERT INTO  `orders_total` ("
                 . "`orders_total_id` , "
                 . "`orders_id` , "
@@ -505,7 +505,7 @@ class Db
                 . "NULL, "
                 . "'" . xtc_db_input($orderId) . "', "
                 . "'" . xtc_db_input($credit['name']) . ":', "
-                . "'" . xtc_db_input(Data::getFormattedPrice($credit['totalPrice'], $order->info['language'], $order)) . "',  "
+                . "'" . xtc_db_input(rpData::getFormattedPrice($credit['totalPrice'], $order->info['language'], $order)) . "',  "
                 . "'" . (float) $credit['totalPrice'] . "',  "
                 . "'" . xtc_db_input($credit['id']) . "',  "
                 . "'80'"
@@ -564,7 +564,7 @@ class Db
      */
     public static function getLogEntrys($orderBy = 'date')
     {
-        $sql = 'SELECT * FROM ratepay_log ORDER BY ' . xtc_db_input($orderBy) . ' ' . Data::getLoggingLogical();
+        $sql = 'SELECT * FROM ratepay_log ORDER BY ' . xtc_db_input($orderBy) . ' ' . rpData::getLoggingLogical();
         return xtc_db_query($sql);
     }
 
@@ -626,18 +626,18 @@ class Db
         foreach ($items as $item) {
             $id = $item['id'];
             if (array_key_exists($id, $post) && array_key_exists('toShip', $post[$id])) {
-                $itemData[] = Data::getDeliverItemData($item, $post[$id]['toShip']);
+                $itemData[] = rpData::getDeliverItemData($item, $post[$id]['toShip']);
             } elseif (array_key_exists($id, $post) && array_key_exists('toCancel', $post[$id])) {
-                $itemData[] = Data::getCancelItemData($item, $post[$id]['toCancel']);
+                $itemData[] = rpData::getCancelItemData($item, $post[$id]['toCancel']);
             } elseif (array_key_exists($id, $post) && array_key_exists('toRefund', $post[$id])) {
-                $itemData[] = Data::getRefundItemData($item, $post[$id]['toRefund']);
+                $itemData[] = rpData::getRefundItemData($item, $post[$id]['toRefund']);
             } else {
-                $itemData[] = Data::getCancelItemData($item);
+                $itemData[] = rpData::getCancelItemData($item);
             }
         }
 
         if (array_key_exists('voucherAmount', $post)) {
-            $itemData[] = Data::getCreditItem($post);
+            $itemData[] = rpData::getCreditItem($post);
         }
 
         return $itemData;
@@ -726,7 +726,7 @@ class Db
     public static function setRpCreditItem($post)
     {
         $order = new order($post['order_number']);
-        self::setRpOrderItem(Data::getCreditItem($post), $post['order_number'], $order->info['payment_method']);
+        self::setRpOrderItem(rpData::getCreditItem($post), $post['order_number'], $order->info['payment_method']);
     }
 
     /**
@@ -739,17 +739,17 @@ class Db
     public static function setRpOrderItems(order $order, $orderId, $payment)
     {
         foreach ($order->products as $product) {
-            self::setRpOrderItem(Data::getItemData($product), $orderId, $payment);
+            self::setRpOrderItem(rpData::getItemData($product), $orderId, $payment);
         }
 
-        foreach (Data::getDiscounts() as $discountData) {
-            $discount = Data::getDiscountData($discountData);
+        foreach (rpData::getDiscounts() as $discountData) {
+            $discount = rpData::getDiscountData($discountData);
             if (!empty($discount)) {
                 self::setRpOrderItem($discount, $orderId, $payment);
             }
         }
 
-        $shipping = Data::getShippingData($order);
+        $shipping = rpData::getShippingData($order);
         if (!empty($shipping)) {
             self::setRpOrderItem($shipping, $orderId, $payment);
         }
@@ -759,14 +759,14 @@ class Db
      * This method save's all necessary request and response informations in the database
      *
      * @param order $order
-     * @param SimpleXmlExtended $request
+     * @param rpSimpleXmlExtended $request
      * @param string $orderId
      * @param SimpleXMLElement $response
      */
     public static function xmlLog($order, $request, $orderId = 'N/A', $response = null)
     {
-        require_once(dirname(__FILE__) . '/../../../../lang/' . Session::getLang() . '/modules/payment/' . $order->info['payment_method'] . '.php');
-        $payment = Loader::getRatepayPayment($order->info['payment_method']);
+        require_once(dirname(__FILE__) . '/../../../../lang/' . rpSession::getLang() . '/modules/payment/' . $order->info['payment_method'] . '.php');
+        $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
         if ($payment->logging) {
             $transactionId = 'N/A';
             $subType = 'N/A';

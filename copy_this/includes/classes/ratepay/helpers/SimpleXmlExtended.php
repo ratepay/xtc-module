@@ -19,7 +19,7 @@
 /**
  * SimpleXmlExtended Class workaround to add cdata elements to a simple xml object
  */
-class SimpleXmlExtended extends SimpleXMLElement
+class rpSimpleXmlExtended extends SimpleXMLElement
 {
 
     /**
