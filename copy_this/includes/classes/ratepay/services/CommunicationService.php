@@ -51,7 +51,7 @@ class rpCommunicationService
         curl_setopt($curl, CURLOPT_POSTFIELDS, $xml);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($curl, CURLOPT_SSLVERION, 1);
+        curl_setopt($curl, CURLOPT_SSLVERSION, 1);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
             "Content-Type: text/xml; charset=UTF-8",
             "Accept: */*",
