@@ -75,6 +75,7 @@ class pi_ratepay_xml_service
         curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlRequest);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSLVERSION, 1);
         // Execute the connection
         $result = curl_exec($ch);
         // Close it
