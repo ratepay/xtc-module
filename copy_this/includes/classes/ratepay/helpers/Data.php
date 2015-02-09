@@ -528,24 +528,6 @@ class rpData
     }
 
     /**
-     * Is full deliver
-     *
-     * @param array $post
-     * @param int $orderId
-     * @return boolean
-     */
-    public static function isFullDeliver($post, $orderId)
-    {
-        foreach (rpDb::getRpItems($orderId) as $item) {
-            if (!($item['ordered'] == $post[$item['id']]['toShip'])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Is full cancel
      *
      * @param array $post

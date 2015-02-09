@@ -41,9 +41,8 @@ class rpOrderController
         $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
         $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
         $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
-        $subType = rpData::isFullDeliver(self::getDeliverPostData($post), $orderId) ? 'full-deliver' : 'partial-deliver';
         $data = array(
-            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
+            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId),
             'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getDeliverPostData($post))
         );
         $requestService = new rpRequestService($payment->sandbox, $data);
