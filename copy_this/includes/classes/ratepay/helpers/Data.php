@@ -82,12 +82,11 @@ class rpData
     {
         $price = empty($post['voucherAmountKomma']) ? floatval($post['voucherAmount']) : floatval($post['voucherAmount'] . '.' . $post['voucherAmountKomma']);
         $credit = array();
-        $credit['id'] = 'pi-Merchant-Voucher-' . rpDb::getLastCreditId($post['order_number']);
+        $credit['id'] = 'CREDIT[' . rpDb::getLastCreditId($post['order_number']) . ']';
         $credit['name'] = utf8_decode('Händler Gutschrift');
         $credit['qty'] = 1;
-        $credit['tax'] = 0;
-        $credit['unitPrice'] = $price * -1;
-        $credit['totalPrice'] = $price * -1;
+        $credit['unitPriceGross'] = $price * -1;
+        $credit['taxRate'] = 0;
 
         return $credit;
     }
@@ -106,9 +105,8 @@ class rpData
         $entry['id'] = $item['articleNumber'];
         $entry['name'] = $item['articleName'];
         $entry['qty'] = $qty;
-        $entry['tax'] = $item['unitTax'] * $qty;
-        $entry['unitPrice'] = $item['unitPrice'];
-        $entry['totalPrice'] = $item['unitPrice'] * $qty;
+        $entry['unitPriceGross'] = floatval($item['unitPriceGross']);
+        $entry['taxRate'] = floatval($item['taxRate']);
         return $entry;
     }
 
@@ -125,10 +123,9 @@ class rpData
         $qty = $item['ordered'] - $item['cancelled'] - $item['returned'] - $toCancel;
         $entry['id'] = $item['articleNumber'];
         $entry['name'] = $item['articleName'];
-        $entry['qty'] = $qty;
-        $entry['tax'] = $item['unitTax'] * $qty;
-        $entry['unitPrice'] = $item['unitPrice'];
-        $entry['totalPrice'] = $item['unitPrice'] * $qty;
+        $entry['qty'] = intval($qty);
+        $entry['unitPriceGross'] = floatval($item['unitPriceGross']);
+        $entry['taxRate'] = floatval($item['taxRate']);
 
         return $entry;
     }
@@ -145,10 +142,9 @@ class rpData
         $entry = array();
         $entry['id'] = $item['articleNumber'];
         $entry['name'] = $item['articleName'];
-        $entry['qty'] = $toShip;
-        $entry['tax'] = $item['unitTax'] * $toShip;
-        $entry['unitPrice'] = $item['unitPrice'];
-        $entry['totalPrice'] = $item['unitPrice'] * $toShip;
+        $entry['qty'] = intval($toShip);
+        $entry['unitPriceGross'] = floatval($item['unitPriceGross']);
+        $entry['taxRate'] = floatval($item['taxRate']);
 
         return $entry;
     }
@@ -162,13 +158,11 @@ class rpData
     public static function getItemData($product)
     {
         $item = array();
-        $unitPrice = $product['price'] / (100 + floatval($product['tax'])) * 100;
-        $item['qty'] = $product['qty'];
-        $item['name'] = $product['name'];
         $item['id'] = $product['id'];
-        $item['unitPrice'] = $unitPrice;
-        $item['totalPrice'] = $unitPrice * $product['qty'];
-        $item['tax'] = $product['qty'] * ($product['price'] / (100 + floatval($product['tax'])) * floatval($product['tax']));
+        $item['name'] = $product['name'];
+        $item['qty'] = intval($product['qty']);
+        $item['unitPriceGross'] = floatval($product['price']);
+        $item['taxRate'] = floatval($product['tax']);
 
         return $item;
     }
@@ -187,9 +181,8 @@ class rpData
             $shipping['qty'] = 1;
             $shipping['name'] = $order->info['shipping_method'];
             $shipping['id'] = 'SHIPPING';
-            $shipping['unitPrice'] = $order->info['shipping_cost'];
-            $shipping['totalPrice'] = $order->info['shipping_cost'];
-            $shipping['tax'] = self::getShippingTaxAmount($order);
+            $shipping['unitPriceGross'] = $order->info['shipping_cost'] + self::getShippingTaxAmount($order);
+            $shipping['taxRate'] = self::getShippingTaxRate($order);
             rpSession::setRpSessionEntry('shipping', $shipping);
         } else if (array_key_exists('shipping', $session)) {
             $shipping = rpSession::getRpSessionEntry('shipping');
@@ -229,7 +222,7 @@ class rpData
         $discountPrice = 0;
         foreach (self::getDiscounts() as $discountData) {
             $discount = self::getDiscountData($discountData);
-            $discountPrice += $discount['totalPrice'] + $discount['tax'];
+            $discountPrice += $discount['totalPriceGross'];
         }
 
         $amount = $order->info['total'] + self::getShippingTaxAmount($order) + $discountPrice;
@@ -238,11 +231,21 @@ class rpData
             $amount = 0;
             $items = rpDb::getItemsByTable($orderId, $post);
             foreach ($items as $item) {
-                $amount += $item['totalPrice'] + $item['tax'];
+                $amount += floatval($item['unitPriceGross']) * $item['qty'];
             }
         }
 
         return $amount;
+    }
+
+    /**
+     * Retrieve the current item amount
+     *
+     * @param array $item
+     * @return float
+     */
+    public static function getItemAmount($item) {
+        return $item['unitPriceGross'] * ($item['ordered'] - $item['cancelled'] - $item['returned']);
     }
 
     /**
@@ -330,9 +333,8 @@ class rpData
             $discount['qty'] = 1;
             $discount['name'] = $discountData['title'];
             $discount['id'] = 'DISCOUNT';
-            $discount['unitPrice'] = number_format(self::getCouponAmount($discountData['value']), 2, ".", "");
-            $discount['totalPrice'] = number_format(self::getCouponAmount($discountData['value']), 2, ".", "");
-            $discount['tax'] = number_format(self::getCouponTaxAmount($discountData['value']), 2, ".", "");
+            $discount['unitPriceGross'] = number_format($discountData['value'], 2, ".", "") * (-1);
+            $discount['taxRate'] = self::getCouponTaxRate();
         }
 
         return $discount;
@@ -369,31 +371,6 @@ class rpData
         }
 
         return $couponTaxClass;
-    }
-
-    /**
-     * Retrive the coupon tax amount
-     *
-     * @param float $amount
-     * @return float
-     */
-    public static function getCouponTaxAmount($amount)
-    {
-        $taxAmount = (($amount / (100 + self::getCouponTaxRate()) * 100) - $amount);
-
-        return $taxAmount;
-    }
-
-    /**
-     * Retrieve the coupon amount
-     *
-     * @param float $amount
-     * @return float
-     */
-    public static function getCouponAmount($amount)
-    {
-        $amount = $amount * (-1);
-        return $amount + self::getCouponTaxAmount($amount);
     }
 
     /**

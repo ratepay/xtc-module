@@ -241,9 +241,8 @@ class rpRequestMapper
         $item->setArticleName($itemData['name'])
                 ->setArticleNumber($itemData['id'])
                 ->setQuantity($itemData['qty'])
-                ->setTax($itemData['tax'])
-                ->setTotalPrice($itemData['totalPrice'])
-                ->setUnitPrice($itemData['unitPrice']);
+                ->setTaxRate($itemData['taxRate'])
+                ->setUnitPriceGross($itemData['unitPriceGross']);
         return $item;
     }
 

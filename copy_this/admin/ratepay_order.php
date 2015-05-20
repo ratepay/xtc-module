@@ -166,9 +166,9 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_QTY; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ART_ID; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_PRODUCT_NAME; ?></th>
-                                                        <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_PRICE_NETTO; ?></th>
-                                                        <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_TAX_AMOUNT; ?></th>
-                                                        <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_ROW_PRICE; ?></th>
+                                                        <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_PRICE_BRUTTO; ?></th>
+                                                        <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_TOTAL_PRICE_BRUTTO; ?></th>
+                                                        <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_TAX_RATE; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_ORDERED; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERED; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_CANCELED; ?></th>
@@ -180,11 +180,11 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                                             <?php $qty = rpData::getAvailableItemQtyToShipOrCancel($item); ?>
                                                             <input <?php if ($qty <= 0): echo 'readonly="readonly"'; endif; ?> type="text" name="items[<?php echo $item['id']; ?>]" value="<?php echo $qty;?>" onKeyUp="RpOrder.check(this, <?php echo $qty; ?>);" onFocus="this.select();" size="3"/>
                                                         </td>
-                                                        <td class="dataTableContent"><?php echo $item['articleNumber']; ?></td>
-                                                        <td class="dataTableContent"><?php echo $item['articleName']; ?></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($item['unitPrice'], $lang, $order); ?></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($item['totalTax'], $lang, $order); ?></td>
-                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($item['totalPriceWithTax'], $lang, $order); ?></td>
+                                                        <td class="dataTableContent" <?php if(rpData::getItemAmount($item) == 0) echo "style=\"text-decoration: line-through;\""; ?>><?php echo $item['articleNumber']; ?></td>
+                                                        <td class="dataTableContent" <?php if(rpData::getItemAmount($item) == 0) echo "style=\"text-decoration: line-through;\""; ?>><?php echo $item['articleName']; ?></td>
+                                                        <td class="dataTableContent piRpRight" <?php if(rpData::getItemAmount($item) == 0) echo "style=\"text-decoration: line-through;\""; ?>><?php echo rpData::getFormattedPrice($item['unitPriceGross'], $lang, $order); ?></td>
+                                                        <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice(rpData::getItemAmount($item), $lang, $order); ?></td>
+                                                        <td class="dataTableContent piRpRight"><?php echo number_format(round($item['taxRate'], 2), 0, ".", ""); ?>%</td>
                                                         <td class="dataTableContent piRpRight"><?php echo $item['ordered']; ?></td>
                                                         <td class="dataTableContent piRpRight"><?php echo $item['shipped']; ?></td>
                                                         <td class="dataTableContent piRpRight"><?php echo $item['cancelled']; ?></td>
@@ -196,8 +196,8 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
-                                                        <td class="dataTableContent"></td>
                                                         <td class="dataTableContent piRpRight"><?php echo rpData::getFormattedPrice($basketAmount, $lang, $order); ?></td>
+                                                        <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>
                                                         <td class="dataTableContent"></td>

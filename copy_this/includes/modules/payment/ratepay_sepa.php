@@ -184,7 +184,7 @@ class ratepay_sepa extends ratepay_abstract
     {
         global $order;
         $this->code = 'ratepay_sepa';
-        $this->version = '2.1.5';
+        $this->version = '2.2.0';
         $this->shopVersion = str_replace(' ', '', str_replace("xt:Commerce v", "", PROJECT_VERSION));
         $this->shopSystem = 'xt:Commerce';
         $this->title = MODULE_PAYMENT_RATEPAY_SEPA_TEXT . " (" . $this->version . ")";
@@ -480,12 +480,8 @@ class ratepay_sepa extends ratepay_abstract
                     . " `shipped` INT NOT NULL DEFAULT '0',"
                     . " `cancelled` INT NOT NULL DEFAULT '0',"
                     . " `returned` INT NOT NULL DEFAULT '0',"
-                    . " `unit_price` decimal(14,8) NOT NULL DEFAULT '0',"
-                    . " `unit_price_with_tax` decimal(14,8) NOT NULL DEFAULT '0',"
-                    . " `total_price` decimal(14,8) NOT NULL DEFAULT '0',"
-                    . " `total_price_with_tax` decimal(14,8) NOT NULL DEFAULT '0',"
-                    . " `unit_tax` decimal(14,8) NOT NULL DEFAULT '0',"
-                    . " `total_tax` decimal(14,8) NOT NULL DEFAULT '0',"
+                    . " `unit_price_gross` decimal(14,8) NOT NULL DEFAULT '0',"
+                    . " `tax_rate` decimal(4,2) NOT NULL DEFAULT '0',"
                     . " PRIMARY KEY  (`id`)"
                     . " ) ENGINE=MyISAM AUTO_INCREMENT=1;"
             );

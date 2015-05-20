@@ -655,9 +655,8 @@ class rpRequestService
             $item = $items->addCDataChild('item', rpData::removeSpecialChars($itemInfo['articleName']));
             $item->addAttribute('article-number', rpData::removeSpecialChars($itemInfo['articleNumber']));
             $item->addAttribute('quantity', number_format($itemInfo['quantity'], 0, '.', ''));
-            $item->addAttribute('unit-price', number_format(round($itemInfo['unitPrice'], 2), 2, ".", ""));
-            $item->addAttribute('total-price', number_format(round($itemInfo['totalPrice'], 2), 2, ".", ""));
-            $item->addAttribute('tax', number_format(round($itemInfo['tax'], 2), 2, ".", ""));
+            $item->addAttribute('unit-price-gross', number_format(round($itemInfo['unitPriceGross'], 2), 2, ".", ""));
+            $item->addAttribute('tax-rate', number_format(round($itemInfo['taxRate'], 2), 0, ".", ""));
         }
 
         return $this;

@@ -1,4 +1,7 @@
 ## RatePAY xt:Commerce
+# Version 2.2.0
+ * update to WKL 1.6
+ * no hiding of methods while sandbox mode
 
 # Version 2.1.5
  * remove confirmation deliver subtypes

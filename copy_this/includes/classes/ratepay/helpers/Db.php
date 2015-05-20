@@ -168,13 +168,15 @@ class rpDb
     private static function _refundRpItem($id, $qty, order $order)
     {
         $payment = $order->info['payment_method'];
-        xtc_db_query("UPDATE " . $payment . "_items"
+        /*xtc_db_query("UPDATE " . $payment . "_items"
                 . " SET"
                 . " returned = returned + " . (int) $qty . ","
                 . " total_price = unit_price * (ordered - cancelled - returned),"
                 . " total_price_with_tax = unit_price_with_tax * (ordered - cancelled - returned),"
                 . " total_tax = unit_tax * (ordered - cancelled - returned)"
-                . " WHERE `id` = " . (int) $id);
+                . " WHERE `id` = " . (int) $id);*/
+
+        xtc_db_query("UPDATE " . $payment . "_items SET returned = returned + " . (int) $qty . " WHERE `id` = " . (int) $id);
     }
 
     /**
@@ -195,12 +197,8 @@ class rpDb
                 . "shipped, "
                 . "cancelled,"
                 . "returned,"
-                . "unit_price,"
-                . "unit_price_with_tax,"
-                . "total_price,"
-                . "total_price_with_tax,"
-                . "unit_tax,"
-                . "total_tax"
+                . "unit_price_gross,"
+                . "tax_rate"
                 . ") VALUES ('"
                 . xtc_db_input($orderId) . "', '"
                 . xtc_db_input($data['id']) . "', '"
@@ -209,12 +207,8 @@ class rpDb
                 . xtc_db_input(0) . ", "
                 . xtc_db_input(0) . ", "
                 . xtc_db_input(0) . ", "
-                . xtc_db_input($data['unitPrice']) . ", "
-                . xtc_db_input($data['unitPrice'] + $unitTax) . ", "
-                . xtc_db_input($data['totalPrice']) . ", "
-                . xtc_db_input($data['totalPrice'] + $data['tax']) . ", "
-                . xtc_db_input($unitTax) . ", "
-                . xtc_db_input($data['tax'])
+                . xtc_db_input($data['unitPriceGross']) . ", "
+                . xtc_db_input($data['taxRate'])
                 . ")";
 
         xtc_db_query($sql);
@@ -230,13 +224,14 @@ class rpDb
     private static function _cancelRpItem($id, $qty, order $order)
     {
         $payment = $order->info['payment_method'];
-        xtc_db_query("UPDATE " . $payment . "_items"
+        /*xtc_db_query("UPDATE " . $payment . "_items"
                 . " SET"
                 . " cancelled = cancelled + " . (int) $qty . ","
                 . " total_price = unit_price * (ordered - cancelled - returned),"
                 . " total_price_with_tax = unit_price_with_tax * (ordered - cancelled - returned ),"
                 . " total_tax = unit_tax * (ordered - cancelled - returned)"
-                . " WHERE `id` = " . (int) $id);
+                . " WHERE `id` = " . (int) $id);*/
+        xtc_db_query("UPDATE " . $payment . "_items SET cancelled = cancelled + " . (int) $qty . " WHERE `id` = " . (int) $id);
     }
 
     /**
@@ -595,16 +590,12 @@ class rpDb
                 'id' => $item['id'],
                 'articleNumber' => $item['article_number'],
                 'articleName' => $item['article_name'],
-                'ordered' => $item['ordered'],
-                'shipped' => $item['shipped'],
-                'cancelled' => $item['cancelled'],
-                'returned' => $item['returned'],
-                'unitPrice' => $item['unit_price'],
-                'unitPriceWithTax' => $item['unit_price_with_tax'],
-                'totalPrice' => $item['total_price'],
-                'totalPriceWithTax' => $item['total_price_with_tax'],
-                'unitTax' => $item['unit_tax'],
-                'totalTax' => $item['total_tax']
+                'ordered' => intval($item['ordered']),
+                'shipped' => intval($item['shipped']),
+                'cancelled' => intval($item['cancelled']),
+                'returned' => intval($item['returned']),
+                'unitPriceGross' => floatval($item['unit_price_gross']),
+                'taxRate' => floatval($item['tax_rate'])
             );
         }
 
@@ -652,9 +643,9 @@ class rpDb
     public static function getLastCreditId($orderId)
     {
         $order = new order($orderId);
-        $query = xtc_db_query('SELECT count(id) as "id" FROM `' . $order->info['payment_method'] . '_items` WHERE article_name = "Händler Gutschrift"');
+        $query = xtc_db_query('SELECT count(id) as "credits" FROM `' . $order->info['payment_method'] . '_items` WHERE article_number LIKE "%CREDIT%"');
         $data = xtc_db_fetch_array($query);
-        return $data['id'];
+        return intval($data['credits']) + 1;
     }
 
     /**
