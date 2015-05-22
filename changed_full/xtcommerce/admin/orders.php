@@ -725,6 +725,7 @@ elseif ($_GET['action'] == 'custom_action') {
 				// RATEPAY START
 				include ('includes/ratepay_order_buttons.php');	
 				// RATEPAY END
+
 				//$contents[] = array('align' => 'center', 'text' => '');
 
 				$contents[] = array ('text' => '<br />'.TEXT_DATE_ORDER_CREATED.' '.xtc_date_short($oInfo->date_purchased));

@@ -82,13 +82,48 @@ class rpData
     {
         $price = empty($post['voucherAmountKomma']) ? floatval($post['voucherAmount']) : floatval($post['voucherAmount'] . '.' . $post['voucherAmountKomma']);
         $credit = array();
-        $credit['id'] = 'CREDIT[' . rpDb::getLastCreditId($post['order_number']) . ']';
+        $credit['id'] = 'CREDIT[' . rpDb::getNextCreditId($post['order_number']) . ']';
         $credit['name'] = utf8_decode('Händler Gutschrift');
         $credit['qty'] = 1;
         $credit['unitPriceGross'] = $price * -1;
-        $credit['taxRate'] = 0;
+        $credit['taxRate'] = 19;
 
         return $credit;
+    }
+
+    /**
+     * Subtrahate the quantitie from the given item with the quantitie to cancel
+     *
+     * @param array $item
+     * @param int $toCancel
+     * @return array
+     */
+    public static function getRemainingItemData(array $item, $subType = false)
+    {
+        $qty = $item['ordered'];
+        switch ($subType) {
+            case 'cancellation':
+                $qty -= $item['shipped'] + $item['cancelled'];
+                break;
+            case 'return':
+                $qty -= $item['ordered'] - $item['shipped'];
+                break;
+            case 'credit':
+                $qty -= $item['shipped'] + $item['cancelled'];
+                break;
+            default:
+                $qty -= $item['cancelled'] + $item['returned'];
+                break;
+        }
+
+        $entry = array();
+        $entry['id'] = $item['articleNumber'];
+        $entry['name'] = $item['articleName'];
+        $entry['qty'] = $qty;
+        $entry['unitPriceGross'] = $item['unitPriceGross'];
+        $entry['taxRate'] = $item['taxRate'];
+
+        return $entry;
     }
 
     /**
@@ -105,8 +140,8 @@ class rpData
         $entry['id'] = $item['articleNumber'];
         $entry['name'] = $item['articleName'];
         $entry['qty'] = $qty;
-        $entry['unitPriceGross'] = floatval($item['unitPriceGross']);
-        $entry['taxRate'] = floatval($item['taxRate']);
+        $entry['unitPriceGross'] = $item['unitPriceGross'];
+        $entry['taxRate'] = $item['taxRate'];
         return $entry;
     }
 
@@ -120,12 +155,12 @@ class rpData
     public static function getCancelItemData(array $item, $toCancel = 0)
     {
         $entry = array();
-        $qty = $item['ordered'] - $item['cancelled'] - $item['returned'] - $toCancel;
+        $qty = $item['ordered'] - $item['shipped'] - $item['cancelled'] - $item['returned'] - $toCancel;
         $entry['id'] = $item['articleNumber'];
         $entry['name'] = $item['articleName'];
-        $entry['qty'] = intval($qty);
-        $entry['unitPriceGross'] = floatval($item['unitPriceGross']);
-        $entry['taxRate'] = floatval($item['taxRate']);
+        $entry['qty'] = $qty;
+        $entry['unitPriceGross'] = $item['unitPriceGross'];
+        $entry['taxRate'] = $item['taxRate'];
 
         return $entry;
     }
@@ -142,9 +177,9 @@ class rpData
         $entry = array();
         $entry['id'] = $item['articleNumber'];
         $entry['name'] = $item['articleName'];
-        $entry['qty'] = intval($toShip);
-        $entry['unitPriceGross'] = floatval($item['unitPriceGross']);
-        $entry['taxRate'] = floatval($item['taxRate']);
+        $entry['qty'] = $toShip;
+        $entry['unitPriceGross'] = $item['unitPriceGross'];
+        $entry['taxRate'] = $item['taxRate'];
 
         return $entry;
     }
@@ -217,19 +252,19 @@ class rpData
      * @param array $post
      * @return float
      */
-    public static function getBasketAmount(order $order, $orderId = null, array $post = array())
+    public static function getBasketAmount(order $order, $orderId = null, array $post = array(), $subType = false)
     {
         $discountPrice = 0;
         foreach (self::getDiscounts() as $discountData) {
             $discount = self::getDiscountData($discountData);
-            $discountPrice += $discount['totalPriceGross'];
+            $discountPrice += $discount['unitPriceGross'];
         }
 
         $amount = $order->info['total'] + self::getShippingTaxAmount($order) + $discountPrice;
 
         if (!is_null($orderId)) {
             $amount = 0;
-            $items = rpDb::getItemsByTable($orderId, $post);
+            $items = rpDb::getItemsByTable($orderId, $post, $subType);
             foreach ($items as $item) {
                 $amount += floatval($item['unitPriceGross']) * $item['qty'];
             }
@@ -259,8 +294,8 @@ class rpData
         $amount = 0;
         $items = rpDb::getItemsByTable($orderId);
         foreach ($items as $item) {
-            if ($item['id'] != 'DISCOUNT' && $item['id'] != 'SHIPPING' && substr($item['id'], 0, 19) != 'pi-Merchant-Voucher') {
-                $amount += $item['totalPrice'] + $item['tax'];
+            if (!strstr($item['id'], 'DISCOUNT') && !strstr($item['id'], 'SHIPPING') && !strstr($item['id'], 'CREDIT')) {
+                $amount += $item['unitPriceGross'] * $item['qty'];
             }
         }
 
@@ -279,7 +314,7 @@ class rpData
         $amount = 0;
         $items = rpDb::getItemsByTable($orderId);
         foreach ($items as $item) {
-            $amount += $item['tax'];
+            $amount += $item['unitPriceGross'] * ($item['taxRate'] / 100) * $item['qty'];
         }
 
         return $amount;

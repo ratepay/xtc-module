@@ -38,7 +38,8 @@ define('RATEPAY_ADMIN_LOG_BACK', 'Zur&uuml;ck');
 // Logging end
 // Ratepay order
 define('RATEPAY_ORDER_RATEPAY_NAME', 'RatePAY Rechnung');
-define('RATEPAY_ORDER_RATEPAY_ADMIN_DELIVER_CANCEL', 'Lieferung / Stornierung');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_DELIVER_OVERVIEW', '&Uuml;bersicht / Lieferung');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_CANCEL', 'Stornierung');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_RETOUR', 'Retoure');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_RETOURE_BUTTON', 'retournieren');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_HISTORY', 'Historie');

@@ -444,7 +444,7 @@ class rpRequestService
      */
     public function callPaymentChange()
     {
-        $this->_validateHeadInfo()->_validateBasketInfo()->_validatePaymentInfo()->_validateCustomerInfo();
+        $this->_validateHeadInfo()->_validateBasketInfo()->_validatePaymentInfo(); //->_validateCustomerInfo();
         $this->_setOperation('PAYMENT_CHANGE')->constructXml()->_setRequestHead()->_setRequestContent()->_sendXmlRequest();
         return $this->validateResponse();
     }
@@ -543,7 +543,7 @@ class rpRequestService
     private function _setRequestContent()
     {
         $this->_request->addChild('content');
-        if ($this->_getOperation() != 'CONFIRMATION_DELIVER') {
+        if ($this->_getOperation() != 'CONFIRMATION_DELIVER' && $this->_getOperation() != 'PAYMENT_CHANGE') {
             $this->_setRatepayContentCustomer();
         }
 

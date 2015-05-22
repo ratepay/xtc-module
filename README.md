@@ -9,5 +9,5 @@ RatePAY GmbH - XTCommerce Payment Module
 |Version | `2.2.0`
 |Link | `http://www.ratepay.com`
 |Mail | `integration@ratepay.com`
-|Description | `remove confirmation deliver subtypes`
+|Description | `update to WKL/PCL 1.6`
 |Installation | `see separate installation manual`

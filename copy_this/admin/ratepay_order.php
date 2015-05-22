@@ -21,15 +21,17 @@
  */
 require_once ('includes/application_top.php');
 require_once ('../lang/' . $_SESSION['language'] . '/admin/modules/payment/ratepay.php');
-require_once ('../includes/classes/ratepay/helpers/Data.php');
-require_once ('../includes/classes/ratepay/helpers/Db.php');
-require_once ('../includes/classes/ratepay/helpers/Session.php');
-require_once ('../includes/classes/ratepay/helpers/Globals.php');
+require_once('../includes/classes/ratepay/helpers/Data.php');
+require_once('../includes/classes/ratepay/helpers/Db.php');
+require_once('../includes/classes/ratepay/helpers/Session.php');
+require_once('../includes/classes/ratepay/helpers/Globals.php');
 require_once ('includes/classes/order.php');
 $orderId = rpGlobals::hasParam('oID') ? rpGlobals::getParam('oID') : die('Missing param: "oID"');
 $order = new order($orderId);
 $lang = $_SESSION['language'];
 $basketAmount = rpData::getBasketAmount($order, $orderId);
+
+$allItems = rpDb::getRpItems($orderId);
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html <?php echo HTML_PARAMS; ?>>
@@ -145,7 +147,7 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                 <?php endif; ?>
                                 <table border="0" width="100%" cellspacing="0" cellpadding="2" height="40">
                                     <tr>
-                                        <td class="pageHeading"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVER_CANCEL; ?></td>
+                                        <td class="pageHeading"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVER_OVERVIEW; ?></td>
                                     </tr>
                                     <tr>
                                         <td>
@@ -158,7 +160,7 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                         <tr>
                             <td>
                                 <table border="0" width="100%" cellspacing="0" cellpadding="2">
-                                    <form action="<?php echo xtc_href_link('ratepay_order_script.php'); ?>" method="POST" name="ship_or_cancel_form">
+                                    <form action="<?php echo xtc_href_link('ratepay_order_script.php'); ?>" method="POST" name="ship_form">
                                         <tr>
                                             <td valign="top">
                                                 <table style="border: 1px solid #CCCCCC; width: 100%">
@@ -174,7 +176,7 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_CANCELED; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_RETURNED; ?></th>
                                                     </tr>
-                                                    <?php foreach (rpDb::getRpItems($orderId) as $item): ?>
+                                                    <?php foreach ($allItems as $item): ?>
                                                     <tr class="dataTableRow">
                                                         <td class="dataTableContent">
                                                             <?php $qty = rpData::getAvailableItemQtyToShipOrCancel($item); ?>
@@ -206,13 +208,64 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                                 </table>
                                                 <div style="margin-top: 10px;">
                                                     <input type="hidden" value="<?php echo $orderId; ?>" name="order_number"/>
-                                                    <input type="submit" value="<?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERY; ?>" name="ship" class="button"/>&nbsp; 
-                                                    <input type="submit" value="<?php echo RATEPAY_ORDER_RATEPAY_ADMIN_CANCELLATION; ?>" name="cancel" class="button"/>
+                                                    <input type="submit" value="<?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERY; ?>" name="ship" class="button"/>
                                                 </div>
                                             </td>
                                         </tr>
                                     </form>
                                 </table>
+                                <?php
+                                $cancelItems = rpDb::getRpCancelItems($orderId);
+                                if (count($cancelItems) > 0):
+                                    ?>
+                                    <br />
+                                    <br />
+                                    <table border="0" width="100%" cellspacing="0" cellpadding="2">
+                                        <form action="<?php echo xtc_href_link('ratepay_order_script.php'); ?>" method="POST" name="cancel_form">
+                                            <tr>
+                                                <td valign="top">
+                                                    <table border="0" width="100%" cellspacing="0" cellpadding="2" height="40">
+                                                        <tr>
+                                                            <td class="pageHeading"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_CANCEL; ?></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><img width="100%" height="1" border="0" alt="" src="images/pixel_black.gif"></td>
+                                                        </tr>
+                                                    </table>
+                                                    <table style="border: 1px solid #CCCCCC; width: 100%">
+                                                        <tr class="dataTableHeadingRow">
+                                                            <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_QTY; ?></th>
+                                                            <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ART_ID; ?></th>
+                                                            <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_PRODUCT_NAME; ?></th>
+                                                            <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERED; ?></th>
+                                                            <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_RETURNED; ?></th>
+                                                        </tr>
+                                                        <?php foreach ($cancelItems as $item): ?>
+                                                            <tr class="dataTableRow">
+                                                                <td class="dataTableContent">
+                                                                    <?php $qty = rpData::getAvailableItemQtyToShipOrCancel($item); ?>
+                                                                    <input <?php if ($qty <= 0): echo 'disabled="disabled"'; endif; ?> type="text" name="items[<?php echo $item['id']; ?>]" value="<?php echo $qty; ?>" onKeyUp="RpOrder.check(this, <?php echo $qty; ?>);" onFocus="this.select();" size="3"/>
+                                                                </td>
+                                                                <td class="dataTableContent"><?php echo $item['articleNumber']; ?></td>
+                                                                <td class="dataTableContent"><?php echo $item['articleName']; ?></td>
+                                                                <td class="dataTableContent piRpRight"><?php echo $item['shipped']; ?></td>
+                                                                <td class="dataTableContent piRpRight"><?php echo $item['returned']; ?></td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    </table>
+                                                    <div style="margin-top: 10px;">
+                                                        <input type="hidden" value="<?php echo $orderId; ?>" name="order_number"/>
+                                                        <input type="submit" value="<?php echo RATEPAY_ORDER_RATEPAY_ADMIN_CANCELLATION; ?>" name="cancel" class="button"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </form>
+                                    </table>
+                                <?php endif; ?>
+                                <?php
+                                    $returnItems = rpDb::getRpReturnItems($orderId);
+                                    if (count($returnItems) > 0):
+                                ?>
                                 <br />
                                 <br />
                                 <table border="0" width="100%" cellspacing="0" cellpadding="2">
@@ -235,7 +288,7 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERED; ?></th>
                                                         <th class="dataTableHeadingContent"><?php echo RATEPAY_ORDER_RATEPAY_ADMIN_RETURNED; ?></th>
                                                     </tr>
-                                                    <?php foreach (rpDb::getRpItems($orderId) as $item): ?>
+                                                    <?php foreach ($returnItems as $item): ?>
                                                     <tr class="dataTableRow">
                                                         <td class="dataTableContent">
                                                             <?php $qty = rpData::getAvailableItemQtyToRefund($item); ?>
@@ -256,6 +309,7 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                         </tr>
                                     </form>
                                 </table>
+                                <?php endif; ?>
                                 <br/>
                                 <br/>
                                 <form action="<?php echo xtc_href_link('ratepay_order_script.php'); ?>" method="POST" name="credit_form">
@@ -269,6 +323,9 @@ $basketAmount = rpData::getBasketAmount($order, $orderId);
                                         <tr class="dataTableHeadingRow">
                                             <td class="dataTableHeadingContent">
                                                 <input type="hidden" value="<?php echo $orderId; ?>" name="order_number"/>
+                                                <?php foreach ($allItems as $item): ?>
+                                                <input type="hidden" value="0" name="items[<?php echo $item['id']; ?>]"/>
+                                                <?php endforeach; ?>
                                                 <input <?php if ($basketAmount <= 0): echo 'disabled="disabled"'; endif; ?> id="voucherAmount" type="text" value="0" maxlength="4" size="2" name="voucherAmount" onKeyUp="RpOrder.checkVoucher(<?php echo $basketAmount; ?>)" onFocus="this.select();"/>
                                                 &nbsp;,&nbsp;&nbsp;
                                                 <input <?php if ($basketAmount <= 0): echo 'disabled="disabled"'; endif; ?> id="voucherAmountKomma" type="text" value="00" maxlength="2" size="2" name="voucherAmountKomma" onKeyUp="RpOrder.checkVoucher(<?php echo $basketAmount; ?>)" onFocus="this.select();"/>

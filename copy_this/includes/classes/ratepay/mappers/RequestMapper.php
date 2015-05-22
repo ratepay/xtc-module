@@ -154,12 +154,12 @@ class rpRequestMapper
      * @param array $post
      * @return rpBasketInfo
      */
-    public static function getBasketInfoModel(order $order, $orderId = null, array $post = array())
+    public static function getBasketInfoModel(order $order, $orderId = null, array $post = array(), $subType = false)
     {
         $basketInfo = new rpBasketInfo();
-        $basketInfo->setAmount(rpData::getBasketAmount($order, $orderId, $post))
+        $basketInfo->setAmount(rpData::getBasketAmount($order, $orderId, $post, $subType))
                 ->setCurrency($order->info['currency'])
-                ->setItems(self::getItems($order, $post, $orderId));
+                ->setItems(self::getItems($order, $post, $orderId, $subType));
         return $basketInfo;
     }
 
@@ -199,12 +199,12 @@ class rpRequestMapper
      * @param int $orderId
      * @return array
      */
-    private static function getItems(order $order, array $post, $orderId = null)
+    private static function getItems(order $order, array $post, $orderId = null, $subType = false)
     {
         if (is_null($orderId)) {
             $items = self::getItemsByOrder($order);
         } else {
-            $items = self::getItemInfoByTable($orderId, $post);
+            $items = self::getItemInfoByTable($orderId, $post, $subType);
         }
         
         return $items;
@@ -217,10 +217,10 @@ class rpRequestMapper
      * @param array $post
      * @return array
      */
-    private static function getItemInfoByTable($orderId, array $post)
+    private static function getItemInfoByTable($orderId, array $post, $subType = false)
     {
         $itemInfos = array();
-        $items = rpDb::getItemsByTable($orderId, $post);
+        $items = rpDb::getItemsByTable($orderId, $post, $subType);
         foreach ($items as $item) {
             if ($item['qty'] > 0) {
                 $itemInfos[] = self::getItem($item);
