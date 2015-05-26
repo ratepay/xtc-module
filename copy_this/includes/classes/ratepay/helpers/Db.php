@@ -178,7 +178,7 @@ class rpDb
      * @param int $orderId
      * @param string $payment
      */
-    public static function setRpOrderItem($data, $orderId, $payment, $returned = 0)
+    public static function setRpOrderItem($data, $orderId, $payment, $delivery = 0)
     {
         $sql = "INSERT INTO " . $payment . "_items ("
                 . "order_number, "
@@ -195,9 +195,9 @@ class rpDb
                 . xtc_db_input($data['id']) . "', '"
                 . xtc_db_input($data['name']) . "','"
                 . xtc_db_input($data['qty']) . "', "
+                . xtc_db_input($delivery) . ", "
                 . xtc_db_input(0) . ", "
                 . xtc_db_input(0) . ", "
-                . xtc_db_input($returned) . ", "
                 . xtc_db_input($data['unitPriceGross']) . ", "
                 . xtc_db_input($data['taxRate'])
                 . ")";
@@ -684,6 +684,21 @@ class rpDb
         }
 
         return $items;
+    }
+
+    /**
+     * Retrieve amount of all shipped and unrefunded items for the given order id
+     *
+     * @param int $orderId
+     * @return float
+     */
+    public static function getRpBasketAmount($orderId)
+    {
+        $amount = 0;
+        foreach (self::getRpReturnItems($orderId) as $item) {
+            $amount += floatval($item['unitPriceGross']) * intval($item['shipped']);
+        }
+        return $amount;
     }
 
     /**

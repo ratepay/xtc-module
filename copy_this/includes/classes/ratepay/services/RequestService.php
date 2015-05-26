@@ -673,7 +673,9 @@ class rpRequestService
         $payment = $this->_request->content->addChild('payment');
         $payment->addAttribute('method', strtoupper($paymentInfo['method']));
         $payment->addAttribute('currency', strtoupper($paymentInfo['currency']));
-        $payment->addChild('amount', number_format($paymentInfo['amount'], 2, ".", ""));
+        if (!empty($paymentInfo['amount'])) {
+            $payment->addChild('amount', number_format($paymentInfo['amount'], 2, ".", ""));
+        }
         if (!empty($paymentInfo['debitType'])) {
             if (!empty($paymentInfo['installmentNumber'])) {
                 $installment = $payment->addChild('installment-details');

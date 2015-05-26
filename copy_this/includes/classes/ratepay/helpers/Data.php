@@ -106,7 +106,7 @@ class rpData
                 $qty -= $item['shipped'] + $item['cancelled'];
                 break;
             case 'return':
-                $qty -= $item['ordered'] - $item['shipped'];
+                $qty -= $item['returned'];
                 break;
             case 'credit':
                 $qty -= $item['shipped'] + $item['cancelled'];

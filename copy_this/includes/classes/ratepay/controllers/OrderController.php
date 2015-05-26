@@ -77,7 +77,7 @@ class rpOrderController
         $data = array(
             'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
             'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getCancelPostData($post), $subType),
-            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, self::getCancelPostData($post))
+            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, self::getCancelPostData($post), $subType)
         );
         $requestService = new rpRequestService($payment->sandbox, $data);
         $result = $requestService->callPaymentChange();
@@ -110,26 +110,31 @@ class rpOrderController
         $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
         $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
         $subType = 'return';
-        $data = array(
-            'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
-            'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getRefundPostData($post), $subType),
-            'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, self::getRefundPostData($post))
-        );
-        $requestService = new rpRequestService($payment->sandbox, $data);
-        $result = $requestService->callPaymentChange();
-        rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
-        if (!array_key_exists('error', $result)) {
-            rpSession::setRpSessionEntry('message_css_class', 'messageStackSuccess');
-            rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_SUCCESS);
-            rpDb::refundRpOrder(self::getRefundPostData($post), $order);
-            rpDb::setRpHistoryEntrys($post, 'PAYMENT_CHANGE', $subType);
-            rpDb::cancelOrRefundShopItems($post, $orderId);
-            rpDb::updateShopOrderTotals($orderId);
+        $basketAmount = rpData::getBasketAmount($order, $orderId, self::getRefundPostData($post), $subType);
+        if (rpData::getBasketAmount($order, $orderId, self::getRefundPostData($post), $subType) >= 0) {
+            $data = array(
+                'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
+                'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, self::getRefundPostData($post), $subType),
+                'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, self::getRefundPostData($post), $subType)
+            );
+            $requestService = new rpRequestService($payment->sandbox, $data);
+            $result = $requestService->callPaymentChange();
+            rpDb::xmlLog($order, $requestService->getRequest(), $orderId, $requestService->getResponse());
+            if (!array_key_exists('error', $result)) {
+                rpSession::setRpSessionEntry('message_css_class', 'messageStackSuccess');
+                rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_SUCCESS);
+                rpDb::refundRpOrder(self::getRefundPostData($post), $order);
+                rpDb::setRpHistoryEntrys($post, 'PAYMENT_CHANGE', $subType);
+                rpDb::cancelOrRefundShopItems($post, $orderId);
+                rpDb::updateShopOrderTotals($orderId);
+            } else {
+                rpSession::setRpSessionEntry('message_css_class', 'messageStackError');
+                rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_ERROR);
+            }
         } else {
             rpSession::setRpSessionEntry('message_css_class', 'messageStackError');
             rpSession::setRpSessionEntry('message', RATEPAY_ORDER_MESSAGE_REFUND_ERROR);
         }
-        
         xtc_redirect(xtc_href_link("ratepay_order.php", 'oID=' . $orderId, 'SSL'));
     }
     
@@ -141,8 +146,9 @@ class rpOrderController
     {
         $post = rpGlobals::getPost();
         $orderId = rpGlobals::getPostEntry('order_number');
-        $price = floatval($post['voucherAmount'] . '.' . $post['voucherAmountKomma']);
-        if ($price > 0) {
+        $creditAmount = floatval($post['voucherAmount'] . '.' . $post['voucherAmountKomma']);
+        $deliveredBasketAmount = rpDb::getRpBasketAmount($orderId);
+        if ($creditAmount <= $deliveredBasketAmount) {
             $order = new order($orderId);
             $rate = ($order->info['payment_method'] == 'ratepay_rate') ? true : false;
             $payment = rpLoader::getRatepayPayment($order->info['payment_method']);
@@ -160,7 +166,7 @@ class rpOrderController
             $data = array(
                 'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
                 'BasketInfo' => rpRequestMapper::getBasketInfoModel($order, $orderId, $postCredit, $subType),
-                'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, $postCredit)
+                'PaymentInfo' => rpRequestMapper::getPaymentInfoModel($order, $orderId, $postCredit, $subType)
             );
             $requestService = new rpRequestService($payment->sandbox, $data);
             $result = $requestService->callPaymentChange();

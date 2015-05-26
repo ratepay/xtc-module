@@ -253,27 +253,30 @@ class rpRequestMapper
      * @param int $orderId
      * @return rpPaymentInfo
      */
-    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array())
+    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array(), $subType)
     {
         $paymentInfo = new rpPaymentInfo();
-        $paymentInfo->setAmount(rpData::getPaymentAmount($order, $orderId, $post))->setCurrency($order->info['currency'])
-                ->setMethod(rpData::getRpPaymentMethod($order->info['payment_method']));
-        if ($order->info['payment_method'] == 'ratepay_rate') {
-            if (is_null($orderId)) {
-                $paymentInfo->setDebitType('BANK-TRANSFER')
+        $paymentInfo->setCurrency($order->info['currency']);
+        $paymentInfo->setMethod(rpData::getRpPaymentMethod($order->info['payment_method']));
+        if ($subType != 'credit' && $subType != 'return' && $subType != 'cancellation') {
+            $paymentInfo->setAmount(rpData::getPaymentAmount($order, $orderId, $post));
+            if ($order->info['payment_method'] == 'ratepay_rate') {
+                if (is_null($orderId)) {
+                    $paymentInfo->setDebitType('BANK-TRANSFER')
                         ->setInstallmentAmount(rpSession::getRpSessionEntry('ratepay_rate_rate'))
                         ->setInstallmentNumber(rpSession::getRpSessionEntry('ratepay_rate_number_of_rates'))
                         ->setInterestRate(rpSession::getRpSessionEntry('ratepay_rate_interest_rate'))
                         ->setLastInstallmentAmount(rpSession::getRpSessionEntry('ratepay_rate_last_rate'))
                         ->setPaymentFirstDay(rpSession::getRpSessionEntry('ratepay_payment_firstday'));
-            } else {
-                $details = rpDb::getRatepayRateDetails($orderId);
-                $paymentInfo->setDebitType('BANK-TRANSFER')
+                } else {
+                    $details = rpDb::getRatepayRateDetails($orderId);
+                    $paymentInfo->setDebitType('BANK-TRANSFER')
                         ->setInstallmentAmount($details['rate'])
                         ->setInstallmentNumber($details['number_of_rates'])
                         ->setInterestRate($details['interest_amount'])
                         ->setLastInstallmentAmount($details['last_rate'])
                         ->setPaymentFirstDay($details['payment_firstday']);
+                }
             }
         }
         

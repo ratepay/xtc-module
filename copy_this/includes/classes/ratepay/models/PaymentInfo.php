@@ -301,7 +301,7 @@ class rpPaymentInfo
         $data = array(
             'method'                => $this->_method,
             'currency'              => $this->_currency,
-            'amount'                => $this->_amount,
+            'amount'                => isset($this->_amount) ? $this->_amount : null,
             'debitType'             => isset($this->_debitType) ? $this->_debitType : null,
             'installmentNumber'     => isset($this->_installmentNumber) ? $this->_installmentNumber : null,
             'installmentAmount'     => isset($this->_installmentAmount) ? $this->_installmentAmount : null,
