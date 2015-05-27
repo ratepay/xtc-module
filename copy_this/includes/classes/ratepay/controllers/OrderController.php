@@ -110,7 +110,6 @@ class rpOrderController
         $transactionId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_id');
         $transactionShortId = rpDb::getRatepayOrderDataEntry($orderId, 'transaction_short_id');
         $subType = 'return';
-        $basketAmount = rpData::getBasketAmount($order, $orderId, self::getRefundPostData($post), $subType);
         if (rpData::getBasketAmount($order, $orderId, self::getRefundPostData($post), $subType) >= 0) {
             $data = array(
                 'HeadInfo'   => rpRequestMapper::getHeadInfoModel($order, $transactionId, $transactionShortId, $orderId, $subType),
