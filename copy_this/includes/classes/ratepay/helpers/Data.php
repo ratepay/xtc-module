@@ -100,19 +100,19 @@ class rpData
      */
     public static function getRemainingItemData(array $item, $subType = false)
     {
-        $qty = $item['ordered'];
+        $qty = 0;
         switch ($subType) {
             case 'cancellation':
-                $qty -= $item['shipped'] + $item['cancelled'];
+                $qty = $item['ordered'] - $item['shipped'] + $item['cancelled'];
                 break;
             case 'return':
-                $qty -= $item['returned'];
+                $qty = $item['shipped'] - $item['returned'];
                 break;
             case 'credit':
-                $qty -= $item['shipped'] + $item['cancelled'];
+                $qty = $item['ordered'] - $item['shipped'] + $item['cancelled'];
                 break;
             default:
-                $qty -= $item['cancelled'] + $item['returned'];
+                $qty = $item['ordered'] - $item['cancelled'] + $item['returned'];
                 break;
         }
 
