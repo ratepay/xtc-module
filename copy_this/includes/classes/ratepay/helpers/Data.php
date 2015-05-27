@@ -103,16 +103,16 @@ class rpData
         $qty = 0;
         switch ($subType) {
             case 'cancellation':
-                $qty = $item['ordered'] - $item['shipped'] + $item['cancelled'];
+                $qty = $item['ordered'] - ($item['shipped'] + $item['cancelled']);
                 break;
             case 'return':
                 $qty = $item['shipped'] - $item['returned'];
                 break;
             case 'credit':
-                $qty = $item['ordered'] - $item['shipped'] + $item['cancelled'];
+                $qty = $item['ordered'] - ($item['shipped'] + $item['cancelled']);
                 break;
             default:
-                $qty = $item['ordered'] - $item['cancelled'] + $item['returned'];
+                $qty = $item['ordered'] - ($item['cancelled'] + $item['returned']);
                 break;
         }
 
