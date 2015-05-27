@@ -425,7 +425,7 @@ class ratepay_abstract
                 if ($this->sandbox !== true) {
                     rpData::disableRatepay();
                 }
-                $error = urlencode(htmlspecialchars(constant(strtoupper($this->code) . '_ERROR')));
+                $error = urlencode(constant(strtoupper($this->code) . '_ERROR'));
                 xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
             } else {
                 rpSession::setRpSessionEntry('customers_country_code', $order->customer['country']['iso_code_2']);
@@ -436,7 +436,7 @@ class ratepay_abstract
             if ($this->sandbox !== true) {
                 rpData::disableRatepay();
             }
-            $error = urlencode(htmlspecialchars(constant(strtoupper($this->code) . '_ERROR_GATEWAY')));
+            $error = urlencode(constant(strtoupper($this->code) . '_ERROR_GATEWAY'));
             xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
         }
     }
