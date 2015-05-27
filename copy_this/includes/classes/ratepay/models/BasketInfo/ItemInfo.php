@@ -48,21 +48,14 @@ class rpItemInfo
      * 
      * @var string
      */
-    private $_unitPrice;
-
-    /**
-     * Total price
-     * 
-     * @var string
-     */
-    private $_totalPrice;
+    private $_unitPriceGross;
 
     /**
      * Tax
      * 
      * @var string
      */
-    private $_tax;
+    private $_taxRate;
 
     /**
      * Get article name
@@ -134,70 +127,47 @@ class rpItemInfo
     }
 
     /**
-     * Get unit price
+     * Get unit price gross
      * 
      * @return string
      */
-    public function getUnitPrice()
+    public function getUnitPriceGross()
     {
-        return $this->_unitPrice;
+        return $this->_unitPriceGross;
     }
 
     /**
-     * Set unit price
+     * Set unit price gross
      * 
-     * @param string $unitPrice
+     * @param string $unitPriceGross
      * @return rpItemInfo
      */
-    public function setUnitPrice($unitPrice)
+    public function setUnitPriceGross($unitPriceGross)
     {
-        $this->_unitPrice = $unitPrice;
+        $this->_unitPriceGross = $unitPriceGross;
 
         return $this;
     }
 
     /**
-     * Get total price
+     * Get tax rate
      * 
      * @return string
      */
-    public function getTotalPrice()
+    public function getTaxRate()
     {
-        return $this->_totalPrice;
+        return $this->_taxRate;
     }
 
     /**
-     * Set total price
+     * Set tax rate
      * 
-     * @param string $totalPrice
+     * @param string $taxRate
      * @return rpItemInfo
      */
-    public function setTotalPrice($totalPrice)
+    public function setTaxRate($taxRate)
     {
-        $this->_totalPrice = $totalPrice;
-
-        return $this;
-    }
-
-    /**
-     * Get tax
-     * 
-     * @return string
-     */
-    public function getTax()
-    {
-        return $this->_tax;
-    }
-
-    /**
-     * Set tax
-     * 
-     * @param string $tax
-     * @return rpItemInfo
-     */
-    public function setTax($tax)
-    {
-        $this->_tax = $tax;
+        $this->_taxRate = $taxRate;
 
         return $this;
     }
@@ -210,12 +180,11 @@ class rpItemInfo
     public function getData()
     {
         $data = array(
-            'articleName'   => $this->_articleName,
-            'articleNumber' => $this->_articleNumber,
-            'quantity'      => $this->_quantity,
-            'unitPrice'     => $this->_unitPrice,
-            'totalPrice'    => $this->_totalPrice,
-            'tax'           => $this->_tax
+            'articleName'    => $this->_articleName,
+            'articleNumber'  => $this->_articleNumber,
+            'quantity'       => $this->_quantity,
+            'unitPriceGross' => $this->_unitPriceGross,
+            'taxRate'        => $this->_taxRate
         );
 
         return $data;

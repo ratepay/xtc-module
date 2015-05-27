@@ -154,12 +154,12 @@ class rpRequestMapper
      * @param array $post
      * @return rpBasketInfo
      */
-    public static function getBasketInfoModel(order $order, $orderId = null, array $post = array())
+    public static function getBasketInfoModel(order $order, $orderId = null, array $post = array(), $subType = false)
     {
         $basketInfo = new rpBasketInfo();
-        $basketInfo->setAmount(rpData::getBasketAmount($order, $orderId, $post))
+        $basketInfo->setAmount(rpData::getBasketAmount($order, $orderId, $post, $subType))
                 ->setCurrency($order->info['currency'])
-                ->setItems(self::getItems($order, $post, $orderId));
+                ->setItems(self::getItems($order, $post, $orderId, $subType));
         return $basketInfo;
     }
 
@@ -199,12 +199,12 @@ class rpRequestMapper
      * @param int $orderId
      * @return array
      */
-    private static function getItems(order $order, array $post, $orderId = null)
+    private static function getItems(order $order, array $post, $orderId = null, $subType = false)
     {
         if (is_null($orderId)) {
             $items = self::getItemsByOrder($order);
         } else {
-            $items = self::getItemInfoByTable($orderId, $post);
+            $items = self::getItemInfoByTable($orderId, $post, $subType);
         }
         
         return $items;
@@ -217,10 +217,10 @@ class rpRequestMapper
      * @param array $post
      * @return array
      */
-    private static function getItemInfoByTable($orderId, array $post)
+    private static function getItemInfoByTable($orderId, array $post, $subType = false)
     {
         $itemInfos = array();
-        $items = rpDb::getItemsByTable($orderId, $post);
+        $items = rpDb::getItemsByTable($orderId, $post, $subType);
         foreach ($items as $item) {
             if ($item['qty'] > 0) {
                 $itemInfos[] = self::getItem($item);
@@ -241,9 +241,8 @@ class rpRequestMapper
         $item->setArticleName($itemData['name'])
                 ->setArticleNumber($itemData['id'])
                 ->setQuantity($itemData['qty'])
-                ->setTax($itemData['tax'])
-                ->setTotalPrice($itemData['totalPrice'])
-                ->setUnitPrice($itemData['unitPrice']);
+                ->setTaxRate($itemData['taxRate'])
+                ->setUnitPriceGross($itemData['unitPriceGross']);
         return $item;
     }
 
@@ -254,27 +253,30 @@ class rpRequestMapper
      * @param int $orderId
      * @return rpPaymentInfo
      */
-    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array())
+    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array(), $subType)
     {
         $paymentInfo = new rpPaymentInfo();
-        $paymentInfo->setAmount(rpData::getPaymentAmount($order, $orderId, $post))->setCurrency($order->info['currency'])
-                ->setMethod(rpData::getRpPaymentMethod($order->info['payment_method']));
-        if ($order->info['payment_method'] == 'ratepay_rate') {
-            if (is_null($orderId)) {
-                $paymentInfo->setDebitType('BANK-TRANSFER')
+        $paymentInfo->setCurrency($order->info['currency']);
+        $paymentInfo->setMethod(rpData::getRpPaymentMethod($order->info['payment_method']));
+        if ($subType != 'credit' && $subType != 'return' && $subType != 'cancellation') {
+            $paymentInfo->setAmount(rpData::getPaymentAmount($order, $orderId, $post));
+            if ($order->info['payment_method'] == 'ratepay_rate') {
+                if (is_null($orderId)) {
+                    $paymentInfo->setDebitType('BANK-TRANSFER')
                         ->setInstallmentAmount(rpSession::getRpSessionEntry('ratepay_rate_rate'))
                         ->setInstallmentNumber(rpSession::getRpSessionEntry('ratepay_rate_number_of_rates'))
                         ->setInterestRate(rpSession::getRpSessionEntry('ratepay_rate_interest_rate'))
                         ->setLastInstallmentAmount(rpSession::getRpSessionEntry('ratepay_rate_last_rate'))
                         ->setPaymentFirstDay(rpSession::getRpSessionEntry('ratepay_payment_firstday'));
-            } else {
-                $details = rpDb::getRatepayRateDetails($orderId);
-                $paymentInfo->setDebitType('BANK-TRANSFER')
+                } else {
+                    $details = rpDb::getRatepayRateDetails($orderId);
+                    $paymentInfo->setDebitType('BANK-TRANSFER')
                         ->setInstallmentAmount($details['rate'])
                         ->setInstallmentNumber($details['number_of_rates'])
                         ->setInterestRate($details['interest_amount'])
                         ->setLastInstallmentAmount($details['last_rate'])
                         ->setPaymentFirstDay($details['payment_firstday']);
+                }
             }
         }
         

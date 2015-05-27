@@ -1,4 +1,10 @@
 ## RatePAY xt:Commerce
+# Version 2.2.0
+ * update to WKL 1.6
+ * update to PCL 1.6
+ * removed PC subtypes
+ * changed RP order layout
+ * no hiding of methods while sandbox mode
 
 # Version 2.1.5
  * remove confirmation deliver subtypes

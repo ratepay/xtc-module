@@ -422,7 +422,9 @@ class ratepay_abstract
             $result = $this->_paymentRequest($result['transactionId'], $result['transactionShortId']);
             if (array_key_exists('error', $result) && !array_key_exists('transactionId', $result)) {
                 rpSession::cleanRpSession();
-                rpData::disableRatepay();
+                if ($this->sandbox !== true) {
+                    rpData::disableRatepay();
+                }
                 $error = urlencode(constant(strtoupper($this->code) . '_ERROR'));
                 xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
             } else {
@@ -431,7 +433,9 @@ class ratepay_abstract
                 rpSession::setRpSessionEntry('rpOrder', clone $order);
             }
         } else {
-            rpData::disableRatepay();
+            if ($this->sandbox !== true) {
+                rpData::disableRatepay();
+            }
             $error = urlencode(constant(strtoupper($this->code) . '_ERROR_GATEWAY'));
             xtc_redirect(xtc_href_link(FILENAME_CHECKOUT_PAYMENT, 'error_message=' . $error, 'SSL'));
         }

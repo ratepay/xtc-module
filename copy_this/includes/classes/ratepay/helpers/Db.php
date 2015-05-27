@@ -168,13 +168,7 @@ class rpDb
     private static function _refundRpItem($id, $qty, order $order)
     {
         $payment = $order->info['payment_method'];
-        xtc_db_query("UPDATE " . $payment . "_items"
-                . " SET"
-                . " returned = returned + " . (int) $qty . ","
-                . " total_price = unit_price * (ordered - cancelled - returned),"
-                . " total_price_with_tax = unit_price_with_tax * (ordered - cancelled - returned),"
-                . " total_tax = unit_tax * (ordered - cancelled - returned)"
-                . " WHERE `id` = " . (int) $id);
+        xtc_db_query("UPDATE " . $payment . "_items SET returned = returned + " . (int) $qty . " WHERE `id` = " . (int) $id);
     }
 
     /**
@@ -184,9 +178,8 @@ class rpDb
      * @param int $orderId
      * @param string $payment
      */
-    public static function setRpOrderItem($data, $orderId, $payment)
+    public static function setRpOrderItem($data, $orderId, $payment, $delivery = 0)
     {
-        $unitTax = $data['tax'] / $data['qty'];
         $sql = "INSERT INTO " . $payment . "_items ("
                 . "order_number, "
                 . "article_number, "
@@ -195,26 +188,18 @@ class rpDb
                 . "shipped, "
                 . "cancelled,"
                 . "returned,"
-                . "unit_price,"
-                . "unit_price_with_tax,"
-                . "total_price,"
-                . "total_price_with_tax,"
-                . "unit_tax,"
-                . "total_tax"
+                . "unit_price_gross,"
+                . "tax_rate"
                 . ") VALUES ('"
                 . xtc_db_input($orderId) . "', '"
                 . xtc_db_input($data['id']) . "', '"
                 . xtc_db_input($data['name']) . "','"
                 . xtc_db_input($data['qty']) . "', "
+                . xtc_db_input($delivery) . ", "
                 . xtc_db_input(0) . ", "
                 . xtc_db_input(0) . ", "
-                . xtc_db_input(0) . ", "
-                . xtc_db_input($data['unitPrice']) . ", "
-                . xtc_db_input($data['unitPrice'] + $unitTax) . ", "
-                . xtc_db_input($data['totalPrice']) . ", "
-                . xtc_db_input($data['totalPrice'] + $data['tax']) . ", "
-                . xtc_db_input($unitTax) . ", "
-                . xtc_db_input($data['tax'])
+                . xtc_db_input($data['unitPriceGross']) . ", "
+                . xtc_db_input($data['taxRate'])
                 . ")";
 
         xtc_db_query($sql);
@@ -230,13 +215,7 @@ class rpDb
     private static function _cancelRpItem($id, $qty, order $order)
     {
         $payment = $order->info['payment_method'];
-        xtc_db_query("UPDATE " . $payment . "_items"
-                . " SET"
-                . " cancelled = cancelled + " . (int) $qty . ","
-                . " total_price = unit_price * (ordered - cancelled - returned),"
-                . " total_price_with_tax = unit_price_with_tax * (ordered - cancelled - returned ),"
-                . " total_tax = unit_tax * (ordered - cancelled - returned)"
-                . " WHERE `id` = " . (int) $id);
+        xtc_db_query("UPDATE " . $payment . "_items SET cancelled = cancelled + " . (int) $qty . " WHERE `id` = " . (int) $id);
     }
 
     /**
@@ -407,7 +386,7 @@ class rpDb
         $qty = $item['ordered'] - $item['cancelled'] - $item['returned'];
         $sql = "UPDATE orders_products SET "
                 . "products_quantity = " . (int) $qty . ", "
-                . "final_price = " . (float) $item['total_price_with_tax']
+                . "final_price = " . (float) $item['unit_price_gross']
                 . " WHERE "
                 . "orders_id = '" . xtc_db_input($orderId) . "' "
                 . "AND "
@@ -505,8 +484,8 @@ class rpDb
                 . "NULL, "
                 . "'" . xtc_db_input($orderId) . "', "
                 . "'" . xtc_db_input($credit['name']) . ":', "
-                . "'" . xtc_db_input(rpData::getFormattedPrice($credit['totalPrice'], $order->info['language'], $order)) . "',  "
-                . "'" . (float) $credit['totalPrice'] . "',  "
+                . "'" . xtc_db_input(rpData::getFormattedPrice($credit['unitPriceGross'], $order->info['language'], $order)) . "',  "
+                . "'" . (float) $credit['unitPriceGross'] . "',  "
                 . "'" . xtc_db_input($credit['id']) . "',  "
                 . "'80'"
                 . ")";
@@ -528,7 +507,7 @@ class rpDb
                     self::_removeShopShipping($orderId);
                 } elseif ($item['article_number'] == 'DISCOUNT') {
                     self::_removeShopDiscount($orderId);
-                } elseif ($item['article_name'] == 'Credit') {
+                } elseif (strstr($item['article_number'], 'CREDIT')) {
                     self::_removeShopCredit($item['article_number'], $orderId);
                 } else {
                     self::_updateShopItem($item, $orderId);
@@ -595,20 +574,131 @@ class rpDb
                 'id' => $item['id'],
                 'articleNumber' => $item['article_number'],
                 'articleName' => $item['article_name'],
-                'ordered' => $item['ordered'],
-                'shipped' => $item['shipped'],
-                'cancelled' => $item['cancelled'],
-                'returned' => $item['returned'],
-                'unitPrice' => $item['unit_price'],
-                'unitPriceWithTax' => $item['unit_price_with_tax'],
-                'totalPrice' => $item['total_price'],
-                'totalPriceWithTax' => $item['total_price_with_tax'],
-                'unitTax' => $item['unit_tax'],
-                'totalTax' => $item['total_tax']
+                'ordered' => intval($item['ordered']),
+                'shipped' => intval($item['shipped']),
+                'cancelled' => intval($item['cancelled']),
+                'returned' => intval($item['returned']),
+                'unitPriceGross' => floatval($item['unit_price_gross']),
+                'taxRate' => floatval($item['tax_rate'])
             );
         }
 
         return $items;
+    }
+
+    /**
+     * Retrieve all items for the given order id
+     *
+     * @param int $orderId
+     * @return array
+     */
+    public static function _getRequestTypeRule($subType) {
+        if ($subType == "cancellation") {
+            return " AND ";
+        } elseif ($subType == "return") {
+            return "";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Retrieve all items for the given order id
+     *
+     * @param int $orderId
+     * @return array
+     */
+    public static function getRpUnShipItems($orderId)
+    {
+        $order = new order($orderId);
+        $items = array();
+        $query = xtc_db_query('SELECT * FROM ' . $order->info['payment_method'] . '_items WHERE order_number = "' . (int) $orderId . '" AND shipped < ordered');
+        while ($item = xtc_db_fetch_array($query)) {
+            $items[] = array(
+                'id' => $item['id'],
+                'articleNumber' => $item['article_number'],
+                'articleName' => $item['article_name'],
+                'ordered' => intval($item['ordered']),
+                'shipped' => intval($item['shipped']),
+                'cancelled' => intval($item['cancelled']),
+                'returned' => intval($item['returned']),
+                'unitPriceGross' => floatval($item['unit_price_gross']),
+                'taxRate' => floatval($item['tax_rate'])
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * Retrieve all returnable items for the given order id
+     *
+     * @param int $orderId
+     * @return array
+     */
+    public static function getRpReturnItems($orderId)
+    {
+        $order = new order($orderId);
+        $items = array();
+        $query = xtc_db_query('SELECT * FROM ' . $order->info['payment_method'] . '_items WHERE order_number = "' . (int) $orderId . '" AND returned < shipped');
+        while ($item = xtc_db_fetch_array($query)) {
+            $items[] = array(
+                'id' => $item['id'],
+                'articleNumber' => $item['article_number'],
+                'articleName' => $item['article_name'],
+                'ordered' => intval($item['ordered']),
+                'shipped' => intval($item['shipped']),
+                'cancelled' => intval($item['cancelled']),
+                'returned' => intval($item['returned']),
+                'unitPriceGross' => floatval($item['unit_price_gross']),
+                'taxRate' => floatval($item['tax_rate'])
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * Retrieve all cancellable items for the given order id
+     *
+     * @param int $orderId
+     * @return array
+     */
+    public static function getRpCancelItems($orderId)
+    {
+        $order = new order($orderId);
+        $items = array();
+        $query = xtc_db_query('SELECT * FROM ' . $order->info['payment_method'] . '_items WHERE order_number = "' . (int) $orderId . '" AND (ordered - cancelled - shipped) > 0');
+        while ($item = xtc_db_fetch_array($query)) {
+            $items[] = array(
+                'id' => $item['id'],
+                'articleNumber' => $item['article_number'],
+                'articleName' => $item['article_name'],
+                'ordered' => intval($item['ordered']),
+                'shipped' => intval($item['shipped']),
+                'cancelled' => intval($item['cancelled']),
+                'returned' => intval($item['returned']),
+                'unitPriceGross' => floatval($item['unit_price_gross']),
+                'taxRate' => floatval($item['tax_rate'])
+            );
+        }
+
+        return $items;
+    }
+
+    /**
+     * Retrieve amount of all shipped and unrefunded items for the given order id
+     *
+     * @param int $orderId
+     * @return float
+     */
+    public static function getRpBasketAmount($orderId)
+    {
+        $amount = 0;
+        foreach (self::getRpReturnItems($orderId) as $item) {
+            $amount += floatval($item['unitPriceGross']) * intval($item['shipped']);
+        }
+        return $amount;
     }
 
     /**
@@ -619,7 +709,7 @@ class rpDb
      * @param array $post
      * @return array
      */
-    public static function getItemsByTable($orderId, array $post = array())
+    public static function getItemsByTable($orderId, array $post = array(), $subType = false)
     {
         $items = self::getRpItems($orderId);
         $itemData = array();
@@ -632,7 +722,7 @@ class rpDb
             } elseif (array_key_exists($id, $post) && array_key_exists('toRefund', $post[$id])) {
                 $itemData[] = rpData::getRefundItemData($item, $post[$id]['toRefund']);
             } else {
-                $itemData[] = rpData::getCancelItemData($item);
+                $itemData[] = rpData::getRemainingItemData($item, $subType);
             }
         }
 
@@ -644,17 +734,31 @@ class rpDb
     }
 
     /**
+     * Retrieve the count of all credits and increment by 1
+     *
+     * @param int $orderId
+     * @return int
+     */
+    public static function getNextCreditId($orderId)
+    {
+        $order = new order($orderId);
+        $query = xtc_db_query('SELECT COUNT(id) AS "credits" FROM `' . $order->info['payment_method'] . '_items` WHERE order_number = "' . $orderId . '" AND article_number LIKE "%CREDIT%"');
+        $data = xtc_db_fetch_array($query);
+        return intval($data['credits']) + 1;
+    }
+
+    /**
      * Retrieve the count of all credits
      *
      * @param int $orderId
      * @return int
      */
-    public static function getLastCreditId($orderId)
+    public static function getMaxCreditId($orderId)
     {
         $order = new order($orderId);
-        $query = xtc_db_query('SELECT count(id) as "id" FROM `' . $order->info['payment_method'] . '_items` WHERE article_name = "Händler Gutschrift"');
+        $query = xtc_db_query('SELECT MAX(id) AS id FROM `' . $order->info['payment_method'] . '_items` WHERE order_number = "' . $orderId . '" AND article_number LIKE "%CREDIT%"');
         $data = xtc_db_fetch_array($query);
-        return $data['id'];
+        return intval($data['id']);
     }
 
     /**
@@ -723,10 +827,10 @@ class rpDb
      *
      * @param array $post
      */
-    public static function setRpCreditItem($post)
+    public static function setRpCreditItem($post, $returned = 0)
     {
         $order = new order($post['order_number']);
-        self::setRpOrderItem(rpData::getCreditItem($post), $post['order_number'], $order->info['payment_method']);
+        self::setRpOrderItem(rpData::getCreditItem($post), $post['order_number'], $order->info['payment_method'], $returned);
     }
 
     /**

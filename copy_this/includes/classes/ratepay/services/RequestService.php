@@ -444,7 +444,7 @@ class rpRequestService
      */
     public function callPaymentChange()
     {
-        $this->_validateHeadInfo()->_validateBasketInfo()->_validatePaymentInfo()->_validateCustomerInfo();
+        $this->_validateHeadInfo()->_validateBasketInfo()->_validatePaymentInfo(); //->_validateCustomerInfo();
         $this->_setOperation('PAYMENT_CHANGE')->constructXml()->_setRequestHead()->_setRequestContent()->_sendXmlRequest();
         return $this->validateResponse();
     }
@@ -543,7 +543,7 @@ class rpRequestService
     private function _setRequestContent()
     {
         $this->_request->addChild('content');
-        if ($this->_getOperation() != 'CONFIRMATION_DELIVER') {
+        if ($this->_getOperation() != 'CONFIRMATION_DELIVER' && $this->_getOperation() != 'PAYMENT_CHANGE') {
             $this->_setRatepayContentCustomer();
         }
 
@@ -655,9 +655,8 @@ class rpRequestService
             $item = $items->addCDataChild('item', rpData::removeSpecialChars($itemInfo['articleName']));
             $item->addAttribute('article-number', rpData::removeSpecialChars($itemInfo['articleNumber']));
             $item->addAttribute('quantity', number_format($itemInfo['quantity'], 0, '.', ''));
-            $item->addAttribute('unit-price', number_format(round($itemInfo['unitPrice'], 2), 2, ".", ""));
-            $item->addAttribute('total-price', number_format(round($itemInfo['totalPrice'], 2), 2, ".", ""));
-            $item->addAttribute('tax', number_format(round($itemInfo['tax'], 2), 2, ".", ""));
+            $item->addAttribute('unit-price-gross', number_format(round($itemInfo['unitPriceGross'], 2), 2, ".", ""));
+            $item->addAttribute('tax-rate', number_format(round($itemInfo['taxRate'], 2), 0, ".", ""));
         }
 
         return $this;
@@ -674,7 +673,9 @@ class rpRequestService
         $payment = $this->_request->content->addChild('payment');
         $payment->addAttribute('method', strtoupper($paymentInfo['method']));
         $payment->addAttribute('currency', strtoupper($paymentInfo['currency']));
-        $payment->addChild('amount', number_format($paymentInfo['amount'], 2, ".", ""));
+        if (!empty($paymentInfo['amount'])) {
+            $payment->addChild('amount', number_format($paymentInfo['amount'], 2, ".", ""));
+        }
         if (!empty($paymentInfo['debitType'])) {
             if (!empty($paymentInfo['installmentNumber'])) {
                 $installment = $payment->addChild('installment-details');

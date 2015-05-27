@@ -38,7 +38,8 @@ define('RATEPAY_ADMIN_LOG_BACK', 'Zur&uuml;ck');
 // Logging end
 // Ratepay order
 define('RATEPAY_ORDER_RATEPAY_NAME', 'RatePAY Rechnung');
-define('RATEPAY_ORDER_RATEPAY_ADMIN_DELIVER_CANCEL', 'Lieferung / Stornierung');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_DELIVER_OVERVIEW', '&Uuml;bersicht / Lieferung');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_CANCEL', 'Stornierung');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_RETOUR', 'Retoure');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_RETOURE_BUTTON', 'retournieren');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_HISTORY', 'Historie');
@@ -50,8 +51,11 @@ define('RATEPAY_ORDER_RATEPAY_ADMIN_CREATE_GOODWILL', 'Gutschrift erzeugen');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_QTY', 'Anzahl');
 define('RATEPAY_ORDER_RATEPAY_ART_ID', 'Art.-Nr.');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_PRODUCT_NAME', 'Bezeichnung');
-define('RATEPAY_ORDER_RATEPAY_ADMIN_PRICE_NETTO', 'Preis (Netto)');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_PRICE_NETTO', 'Einzelpreis (Netto)');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_PRICE_BRUTTO', 'Einzelpreis (Brutto)');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_TOTAL_PRICE_BRUTTO', 'Gesamtpreis (Brutto)');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_TAX_AMOUNT', 'Steuerbetrag');
+define('RATEPAY_ORDER_RATEPAY_ADMIN_TAX_RATE', 'Steuersatz');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_ROW_PRICE', 'Gesamtpreis (Brutto)');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_ORDERED', 'Bestellt');
 define('RATEPAY_ORDER_RATEPAY_ADMIN_DELIVERED', 'Geliefert');
