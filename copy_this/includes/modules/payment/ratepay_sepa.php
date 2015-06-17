@@ -184,7 +184,7 @@ class ratepay_sepa extends ratepay_abstract
     {
         global $order;
         $this->code = 'ratepay_sepa';
-        $this->version = '2.2.0';
+        $this->version = '2.2.1';
         $this->shopVersion = str_replace(' ', '', str_replace("xt:Commerce v", "", PROJECT_VERSION));
         $this->shopSystem = 'xt:Commerce';
         $this->title = MODULE_PAYMENT_RATEPAY_SEPA_TEXT . " (" . $this->version . ")";

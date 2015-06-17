@@ -52,10 +52,17 @@ class rpItemInfo
 
     /**
      * Tax
-     * 
+     *
      * @var string
      */
     private $_taxRate;
+
+    /**
+     * Uniqe Article Number / Seriennummer
+     *
+     * @var string
+     */
+    private $_uniqueArticleNumber;
 
     /**
      * Get article name
@@ -172,6 +179,27 @@ class rpItemInfo
         return $this;
     }
 
+
+    public function gettUniqueArticleNumber()
+    {
+        return $this->_uniqueArticleNumber;
+    }
+
+    /**
+     * Set tax rate
+     *
+     * @param string $uniqueArticleNumber
+     * @return rpItemInfo
+     */
+    public function setUniqueArticleNumber($uniqueArticleNumber)
+    {
+        $this->_uniqueArticleNumber = $uniqueArticleNumber;
+
+        return $this;
+    }
+
+
+
     /**
      * Get model data as array
      * 
@@ -180,11 +208,12 @@ class rpItemInfo
     public function getData()
     {
         $data = array(
-            'articleName'    => $this->_articleName,
-            'articleNumber'  => $this->_articleNumber,
-            'quantity'       => $this->_quantity,
-            'unitPriceGross' => $this->_unitPriceGross,
-            'taxRate'        => $this->_taxRate
+            'articleName'           => $this->_articleName,
+            'articleNumber'         => $this->_articleNumber,
+            'uniqueArticleNumber'   => $this->_uniqueArticleNumber,
+            'quantity'              => $this->_quantity,
+            'unitPriceGross'        => $this->_unitPriceGross,
+            'taxRate'               => $this->_taxRate,
         );
 
         return $data;

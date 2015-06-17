@@ -198,7 +198,7 @@ class rpData
         $item['qty'] = intval($product['qty']);
         $item['unitPriceGross'] = floatval($product['price']);
         $item['taxRate'] = floatval($product['tax']);
-
+        $item['model'] = $product['model'];
         return $item;
     }
 

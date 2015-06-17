@@ -172,10 +172,11 @@ class rpRequestMapper
     private static function getItemsByOrder(order $order)
     {
         $items = array();
+
         foreach ($order->products as $product) {
             $items[] = self::getItem(rpData::getItemData($product));
-        }
 
+        }
         $shipping = rpData::getShippingData($order);
         if (!empty($shipping)) {
             $items[] = self::getItem($shipping);
@@ -187,7 +188,6 @@ class rpRequestMapper
                 $items[] = self::getItem($discount);
             }
         }
-
         return $items;
     }
 
@@ -201,6 +201,7 @@ class rpRequestMapper
      */
     private static function getItems(order $order, array $post, $orderId = null, $subType = false)
     {
+
         if (is_null($orderId)) {
             $items = self::getItemsByOrder($order);
         } else {
@@ -239,7 +240,8 @@ class rpRequestMapper
     {
         $item = new rpItemInfo();
         $item->setArticleName($itemData['name'])
-                ->setArticleNumber($itemData['id'])
+                ->setArticleNumber(!empty($itemData['model']) ? $itemData['model'] : $itemData['id'])
+                ->setUniqueArticleNumber($itemData['id'])
                 ->setQuantity($itemData['qty'])
                 ->setTaxRate($itemData['taxRate'])
                 ->setUnitPriceGross($itemData['unitPriceGross']);
@@ -253,7 +255,7 @@ class rpRequestMapper
      * @param int $orderId
      * @return rpPaymentInfo
      */
-    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array(), $subType)
+    public static function getPaymentInfoModel(order $order, $orderId = null, array $post = array(), $subType = false)
     {
         $paymentInfo = new rpPaymentInfo();
         $paymentInfo->setCurrency($order->info['currency']);

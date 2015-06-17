@@ -180,6 +180,7 @@ class rpDb
      */
     public static function setRpOrderItem($data, $orderId, $payment, $delivery = 0)
     {
+        $article_number = !empty($data['model']) ? $data['model'] : $data['id'];
         $sql = "INSERT INTO " . $payment . "_items ("
                 . "order_number, "
                 . "article_number, "
@@ -192,7 +193,7 @@ class rpDb
                 . "tax_rate"
                 . ") VALUES ('"
                 . xtc_db_input($orderId) . "', '"
-                . xtc_db_input($data['id']) . "', '"
+                . xtc_db_input($article_number) . "', '"
                 . xtc_db_input($data['name']) . "','"
                 . xtc_db_input($data['qty']) . "', "
                 . xtc_db_input($delivery) . ", "
