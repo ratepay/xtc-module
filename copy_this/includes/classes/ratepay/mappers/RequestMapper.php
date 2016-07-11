@@ -58,7 +58,9 @@ class rpRequestMapper
                 ->setTransactionShortId($transactionShortId)
                 ->setShopSystem($payment->shopSystem)
                 ->setShopVersion($payment->shopVersion)
-                ->setModuleVersion($payment->version);
+                ->setModuleVersion($payment->version)
+                ->setDeviceSite(rpSession::getRpSessionEntry('RATEPAY_DFP_SNIPPET_ID'))
+                ->setDeviceToken(rpSession::getRpSessionEntry('RATEPAY_DFP_TOKEN'));
 
         return $headInfo;
     }

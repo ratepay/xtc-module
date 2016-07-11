@@ -505,7 +505,7 @@ class rpRequestService
         $system->addAttribute('version', $headInfo['shopVersion'] . '_' . $headInfo['moduleVersion']);
         
         if ($this->_getOperation() == "PAYMENT_REQUEST") {
-            $this->_setRatepayHeadCustomerDevice();
+            $this->_setRatepayHeadCustomerDevice($headInfo);
         }
 
         return $this;
@@ -516,21 +516,13 @@ class rpRequestService
      * 
      * @return rpRequestService
      */
-    private function _setRatepayHeadCustomerDevice()
+    private function _setRatepayHeadCustomerDevice($headInfo)
     {
         $head = $this->_request->head;
+
         $customerDevice = $head->addChild('customer-device');
-
-        $httpHeaderList = $customerDevice->addChild('http-header-list');
-
-        $httpHeaderListAttr = $httpHeaderList->addChild('header', 'text/xml');
-        $httpHeaderListAttr->addAttribute('name', 'Accept');
-
-        $httpHeaderListAttr = $httpHeaderList->addChild('header', 'utf-8');
-        $httpHeaderListAttr->addAttribute('name', 'Accept-Charset');
-
-        $httpHeaderListAttr = $httpHeaderList->addChild('header', 'x86');
-        $httpHeaderListAttr->addAttribute('name', 'UA-CPU');
+        $customerDevice->addChild('device-site', $headInfo['deviceSite']);
+        $customerDevice->addChild('device-token', $headInfo['deviceToken']);
 
         return $this;
     }

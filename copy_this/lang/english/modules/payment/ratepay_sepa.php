@@ -89,6 +89,7 @@ define('MODULE_PAYMENT_RATEPAY_SEPA_ZONE_TITLE', 'Erlaubte Zonen');
 define('MODULE_PAYMENT_RATEPAY_SEPA_ZONE_DESC', 'Bitte geben Sie hier die erlaubten Zonen an');
 define('MODULE_PAYMENT_RATEPAY_SEPA_ORDER_STATUS_ID_TITLE', 'Bestellstatus');
 define('MODULE_PAYMENT_RATEPAY_SEPA_ORDER_STATUS_ID_DESC', 'Bestellungen, welche mit diesem Modul gemacht werden, auf diesen Status setzen');
+define('MODULE_PAYMENT_RATEPAY_SNIPPET_ID_TITLE', 'device Ident SId');
 // Config text and description end
 // Ratepay Info
 

@@ -92,6 +92,20 @@ class rpHeadInfo
     private $_shopSystem;
 
     /**
+     * Device site/snipped id
+     *
+     * @var string
+     */
+    private $_deviceSite;
+
+    /**
+     * Device Token
+     *
+     * @var string
+     */
+    private $_deviceToken;
+
+    /**
      * Set system id
      */
     public function __construct()
@@ -330,6 +344,52 @@ class rpHeadInfo
     }
 
     /**
+     * Get order id
+     *
+     * @return string
+     */
+    public function getDeviceSite()
+    {
+        return $this->_deviceSite;
+    }
+
+    /**
+     * Set device site/snipped id
+     *
+     * @param string $deviceSite
+     * @return rpHeadInfo
+     */
+    public function setDeviceSite($deviceSite)
+    {
+        $this->_deviceSite = $deviceSite;
+
+        return $this;
+    }
+
+    /**
+     * Get order id
+     *
+     * @return string
+     */
+    public function getDeviceToken()
+    {
+        return $this->_deviceToken;
+    }
+
+    /**
+     * Set device token
+     *
+     * @param string $deviceToken
+     * @return rpHeadInfo
+     */
+    public function setDeviceToken($deviceToken)
+    {
+        $this->_deviceToken = $deviceToken;
+
+        return $this;
+    }
+
+    /**
      * Get model data as array
      * 
      * @return array
@@ -346,7 +406,9 @@ class rpHeadInfo
             'systemId'           => !empty($this->_systemId) ? $this->_systemId : 'Not Available',
             'shopSystem'         => $this->_shopSystem,
             'moduleVersion'      => $this->_moduleVersion,
-            'shopVersion'        => $this->_shopVersion
+            'shopVersion'        => $this->_shopVersion,
+            'deviceSite'         => $this->_deviceSite,
+            'deviceToken'        => $this->_deviceToken
         );
 
         return $data;

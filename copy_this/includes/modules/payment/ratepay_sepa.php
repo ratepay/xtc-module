@@ -266,6 +266,20 @@ class ratepay_sepa extends ratepay_abstract
 
             $smarty->caching = 0;
 
+            /* BEGINN OF DEVICE FINGERPRINT CODE */
+            if (!rpSession::getRpSessionEntry('RATEPAY_DFP_TOKEN')) {
+                $ratepay_dfp_token = md5($order->info['total'] . microtime());
+                $ratepay_dfp_snippet_id_query = xtc_db_query("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_PAYMENT_RATEPAY_SNIPPET_ID'");
+                $data = xtc_db_fetch_array($ratepay_dfp_snippet_id_query);
+                $ratepay_dfp_snippet_id = $data['configuration_value'];
+                rpSession::setRpSessionEntry('RATEPAY_DFP_TOKEN', $ratepay_dfp_token);
+                rpSession::setRpSessionEntry('RATEPAY_DFP_SNIPPET_ID', $ratepay_dfp_snippet_id);
+                $smarty->assign('RATEPAY_DFP_TOKEN', $ratepay_dfp_token);
+                $smarty->assign('RATEPAY_DFP_SNIPPET_ID', $ratepay_dfp_snippet_id);
+            }
+            /* END OF DEVICE FINGERPRINT CODE */
+            //CS Aenderung des Value von $display['module'] fuer die Ausgabe
+            $display['module'] =  $this->public_title;
             $display['fields'][] = array('title' => '', 'field' => $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_sepa.html'));
         }
 
@@ -567,6 +581,7 @@ class ratepay_sepa extends ratepay_abstract
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_SEPA_ALLOWED', '', '6', '0', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_SEPA_ORDER_STATUS_ID', '0', '6', '0', 'xtc_cfg_pull_down_order_statuses(', 'xtc_get_order_status_name', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_SEPA_SORT_ORDER', '0', '6', '0', now())");
+        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_SNIPPET_ID', '', '6', '3', now())");
     }
 
     /**
@@ -603,7 +618,8 @@ class ratepay_sepa extends ratepay_abstract
             'MODULE_PAYMENT_RATEPAY_SEPA_ALLOWED',
             'MODULE_PAYMENT_RATEPAY_SEPA_ZONE',
             'MODULE_PAYMENT_RATEPAY_SEPA_ORDER_STATUS_ID',
-            'MODULE_PAYMENT_RATEPAY_SEPA_SORT_ORDER'
+            'MODULE_PAYMENT_RATEPAY_SEPA_SORT_ORDER',
+            'MODULE_PAYMENT_RATEPAY_SNIPPET_ID'
         );
     }
 

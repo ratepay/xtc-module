@@ -16,6 +16,20 @@
  * @license   GPLv2
  */ 
 -->
+<!-- /* BEGINN OF DEVICE FINGERPRINT CODE */ -->
+{if isset($RATEPAY_DFP_TOKEN) }
+<script language="JavaScript" async>
+    var di = {literal} { {/literal} t:'{$RATEPAY_DFP_TOKEN}',v:'{$RATEPAY_DFP_SNIPPET_ID}',l:'Checkout'};
+</script>
+<script type="text/javascript" src="//d.ratepay.com/{$RATEPAY_DFP_SNIPPET_ID}/di.js" async></script>
+<noscript><link rel="stylesheet" type="text/css" href="//d.ratepay.com/di.css?t={$RATEPAY_DFP_TOKEN}&v={$RATEPAY_DFP_SNIPPET_ID}&l=Checkout"></noscript>
+<object type="application/x-shockwave-flash" data="//d.ratepay.com/{$RATEPAY_DFP_SNIPPET_ID}/c.swf" style="float: right; visibility: hidden; height: 0px; width: 0px;">
+    <param name="movie" value="//d.ratepay.com/{$RATEPAY_DFP_SNIPPET_ID}/c.swf" />
+    <param name="flashvars" value="t={$RATEPAY_DFP_TOKEN}&v={$RATEPAY_DFP_SNIPPET_ID}&l=Checkout"/>
+    <param name="AllowScriptAccess" value="always"/>
+</object>
+{/if}
+<!-- /* END OF DEVICE FINGERPRINT CODE */ -->
 
 <style>
 {literal}
