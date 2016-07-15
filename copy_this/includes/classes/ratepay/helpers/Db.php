@@ -933,4 +933,11 @@ class rpDb
             }
         }
     }
+    public static function getRpDfpSId(){
+        $ratepay_dfp_snippet_id_query = xtc_db_query("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_PAYMENT_RATEPAY_SNIPPET_ID'");
+        $data = xtc_db_fetch_array($ratepay_dfp_snippet_id_query);
+        $ratepay_dfp_snippet_id = $data['configuration_value'];
+
+        return $ratepay_dfp_snippet_id;
+    }
 }

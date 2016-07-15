@@ -504,7 +504,7 @@ class rpRequestService
         $system->addAttribute('name', $headInfo['shopSystem']);
         $system->addAttribute('version', $headInfo['shopVersion'] . '_' . $headInfo['moduleVersion']);
         
-        if ($this->_getOperation() == "PAYMENT_REQUEST") {
+        if ($this->_getOperation() == "PAYMENT_REQUEST" && rpDb::getRpDfpSId()) {
             $this->_setRatepayHeadCustomerDevice($headInfo);
         }
 

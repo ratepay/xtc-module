@@ -267,15 +267,12 @@ class ratepay_sepa extends ratepay_abstract
             $smarty->caching = 0;
 
             /* BEGINN OF DEVICE FINGERPRINT CODE */
-            if (!rpSession::getRpSessionEntry('RATEPAY_DFP_TOKEN')) {
+            if (!rpSession::getRpSessionEntry('RATEPAY_DFP_TOKEN') && rpDb::getRpDfpSId()) {
                 $ratepay_dfp_token = md5($order->info['total'] . microtime());
-                $ratepay_dfp_snippet_id_query = xtc_db_query("SELECT configuration_value FROM " . TABLE_CONFIGURATION . " where configuration_key = 'MODULE_PAYMENT_RATEPAY_SNIPPET_ID'");
-                $data = xtc_db_fetch_array($ratepay_dfp_snippet_id_query);
-                $ratepay_dfp_snippet_id = $data['configuration_value'];
                 rpSession::setRpSessionEntry('RATEPAY_DFP_TOKEN', $ratepay_dfp_token);
-                rpSession::setRpSessionEntry('RATEPAY_DFP_SNIPPET_ID', $ratepay_dfp_snippet_id);
+                rpSession::setRpSessionEntry('RATEPAY_DFP_SNIPPET_ID', rpDb::getRpDfpSId());
                 $smarty->assign('RATEPAY_DFP_TOKEN', $ratepay_dfp_token);
-                $smarty->assign('RATEPAY_DFP_SNIPPET_ID', $ratepay_dfp_snippet_id);
+                $smarty->assign('RATEPAY_DFP_SNIPPET_ID', rpDb::getRpDfpSId());
             }
             /* END OF DEVICE FINGERPRINT CODE */
             //CS Aenderung des Value von $display['module'] fuer die Ausgabe
