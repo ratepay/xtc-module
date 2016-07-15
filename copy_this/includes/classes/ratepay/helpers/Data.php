@@ -365,10 +365,11 @@ class rpData
     {
         $discount = array();
         if (!is_null($discountData)) {
+            $discountValue = number_format($discountData['value'], 2, ".", "");
             $discount['qty'] = 1;
             $discount['name'] = $discountData['title'];
             $discount['id'] = 'DISCOUNT';
-            $discount['unitPriceGross'] = number_format($discountData['value'], 2, ".", "") * (-1);
+            $discount['unitPriceGross'] = ($discountValue > 0) ? $discountValue * (-1) : $discountValue;
             $discount['taxRate'] = self::getCouponTaxRate();
         }
 
