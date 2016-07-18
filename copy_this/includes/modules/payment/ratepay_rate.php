@@ -190,7 +190,6 @@ class ratepay_rate extends ratepay_abstract
         $this->maxDe              = MODULE_PAYMENT_RATEPAY_RATE_MAX_DE;
         $this->minAt              = MODULE_PAYMENT_RATEPAY_RATE_MIN_AT;
         $this->maxAt              = MODULE_PAYMENT_RATEPAY_RATE_MAX_AT;
-        $this->paymentFirstDay    = (MODULE_PAYMENT_RATEPAY_RATE_PAYMENT_FIRSTDAY == 'True') ? true : false;
         $this->sandbox            = (MODULE_PAYMENT_RATEPAY_RATE_SANDBOX == 'True') ? true : false;
         $this->logging            = (MODULE_PAYMENT_RATEPAY_RATE_LOGGING == 'True') ? true : false;
         $this->sort_order         = MODULE_PAYMENT_RATEPAY_RATE_SORT_ORDER;
@@ -498,7 +497,6 @@ class ratepay_rate extends ratepay_abstract
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_MAX_AT', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_DE', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_AT', '', '6', '3', NOW())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_PAYMENT_FIRSTDAY', 'False', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, use_function, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_ZONE', '0', '6', '2', 'xtc_get_zone_class_title', 'xtc_cfg_pull_down_zone_classes(', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_ALLOWED', '', '6', '0', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, use_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RATE_ORDER_STATUS_ID', '0', '6', '0', 'xtc_cfg_pull_down_order_statuses(', 'xtc_get_order_status_name', now())");
@@ -535,7 +533,6 @@ class ratepay_rate extends ratepay_abstract
             'MODULE_PAYMENT_RATEPAY_RATE_MAX_AT',
             'MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_DE',
             'MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_AT',
-            'MODULE_PAYMENT_RATEPAY_RATE_PAYMENT_FIRSTDAY',
             'MODULE_PAYMENT_RATEPAY_RATE_ALLOWED',
             'MODULE_PAYMENT_RATEPAY_RATE_ZONE',
             'MODULE_PAYMENT_RATEPAY_RATE_ORDER_STATUS_ID',

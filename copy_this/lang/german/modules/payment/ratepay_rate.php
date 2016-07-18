@@ -45,8 +45,6 @@ define('MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_DE_TITLE', 'RatePAY ZGB-
 define('MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_DE_DESC', 'Zus&auml;tzliche Gesch&auml;ftsbedingungen und Datenschutzerkl&auml;rungen DE');
 define('MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_AT_TITLE', 'RatePAY ZGB-DSH URL AT');
 define('MODULE_PAYMENT_RATEPAY_RATE_RATEPAY_PRIVACY_URL_AT_DESC', 'Zus&auml;tzliche Gesch&auml;ftsbedingungen und Datenschutzerkl&auml;rungen AT');
-define('MODULE_PAYMENT_RATEPAY_RATE_PAYMENT_FIRSTDAY_TITLE', 'Dynamische F&auml;lligkeit');
-define('MODULE_PAYMENT_RATEPAY_RATE_PAYMENT_FIRSTDAY_DESC', 'Wann werden die Raten f&auml;llig');
 define('MODULE_PAYMENT_RATEPAY_RATE_LOGGING_TITLE', 'Logging aktivieren');
 define('MODULE_PAYMENT_RATEPAY_RATE_LOGGING_DESC', 'Loggen Sie alle Transaktionen mit RatePAY');
 define('MODULE_PAYMENT_RATEPAY_RATE_MERCHANT_NAME_TITLE', 'Beg&uuml;nstigte Firma');
