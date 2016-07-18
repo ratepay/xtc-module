@@ -491,13 +491,25 @@ class rpRequestService
         $credential->addChild('profile-id', $headInfo['profileId']);
         $credential->addChild('securitycode', $headInfo['securityCode']);
 
-        if ($this->_getOperation() != 'PAYMENT_INIT' && $this->_getOperation() != 'PROFILE_REQUEST') {
-            if (!empty($headInfo['orderId'])) {
-                $external = $head->addChild('external');
-                $external->addChild('order-id', $headInfo['orderId']);
-            }
+        switch ($this->_getOperation()){
+            case 'PAYMENT_INIT' :
+                break;
+
+            case 'PAYMENT_REQUEST' :
+                if (!empty($_SESSION['customer_id'])) {
+                    $external = $head->addChild('external');
+                    $external->addChild('merchant-consumer-id', $_SESSION['customer_id']);
+                }
+                break;
+
+            case 'PAYMENT_CONFIRM' :
+                if (!empty($headInfo['orderId'])) {
+                    $external = $head->addChild('external');
+                    $external->addChild('order-id', $headInfo['orderId']);
+                }
+                break;
         }
-        
+
         $meta = $head->addChild('meta');
         $systems = $meta->addChild('systems');
         $system = $systems->addChild('system');
