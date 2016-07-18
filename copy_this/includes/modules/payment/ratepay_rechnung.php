@@ -241,14 +241,6 @@ class ratepay_rechnung extends ratepay_abstract
             }
             
             $smarty = new Smarty();
-            $smarty->assign('language', $_SESSION['language']);
-            $smarty->assign('ratepayPrivacyUrl', $privacy);
-            $smarty->assign('RATEPAY_INFO_1', RATEPAY_RECHNUNG_INFO_1);
-            $smarty->assign('RATEPAY_INFO_2', RATEPAY_RECHNUNG_INFO_2);
-            $smarty->assign('RATEPAY_INFO_3', RATEPAY_RECHNUNG_INFO_3);
-
-            $smarty->caching = 0;
-
             /* BEGINN OF DEVICE FINGERPRINT CODE */
             if (!rpSession::getRpSessionEntry('RATEPAY_DFP_TOKEN') && rpDb::getRpDfpSId()) {
                 $ratepay_dfp_token = md5($order->info['total'] . microtime());

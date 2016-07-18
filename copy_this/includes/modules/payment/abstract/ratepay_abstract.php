@@ -340,7 +340,7 @@ class ratepay_abstract
     {
         global $order;
         
-        if (!rpGlobals::hasPostEntry($this->code . '_conditions')) {
+        if (strtoupper($this->code) == 'RATEPAY_SEPA' && !rpGlobals::hasPostEntry($this->code . '_conditions')) {
             $this->error['CONDITIONS'] = 'MISSING';
         }
         
