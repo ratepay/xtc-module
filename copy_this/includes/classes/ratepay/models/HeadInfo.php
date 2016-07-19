@@ -344,7 +344,7 @@ class rpHeadInfo
     }
 
     /**
-     * Get order id
+     * Get device site/snippet id
      *
      * @return string
      */
@@ -367,7 +367,7 @@ class rpHeadInfo
     }
 
     /**
-     * Get order id
+     * Get device token
      *
      * @return string
      */

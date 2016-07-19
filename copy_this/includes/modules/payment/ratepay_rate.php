@@ -243,7 +243,6 @@ class ratepay_rate extends ratepay_abstract
             if (!rpSession::getRpSessionEntry('RATEPAY_DFP_TOKEN') && rpDb::getRpDfpSId()) {
                     $ratepay_dfp_token = md5($order->info['total'] . microtime());
                     rpSession::setRpSessionEntry('RATEPAY_DFP_TOKEN', $ratepay_dfp_token);
-                    rpSession::setRpSessionEntry('RATEPAY_DFP_SNIPPET_ID', rpDb::getRpDfpSId());
                     $smarty->assign('RATEPAY_DFP_TOKEN', $ratepay_dfp_token);
                     $smarty->assign('RATEPAY_DFP_SNIPPET_ID', rpDb::getRpDfpSId());
             }
@@ -252,7 +251,7 @@ class ratepay_rate extends ratepay_abstract
 			//CS Aenderung des Value von $display['module'] fuer die Ausgabe
 			$display['module'] =  $this->public_title; 
 			
-            $display['fields'][] = array('title' => '', 'field' => $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_rate.html'));  
+            $display['fields'][] = array('title' => '', 'field' => $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_rate.html'));
 			
         }
         

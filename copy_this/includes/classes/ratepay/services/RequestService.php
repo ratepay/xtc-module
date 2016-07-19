@@ -516,7 +516,7 @@ class rpRequestService
         $system->addAttribute('name', $headInfo['shopSystem']);
         $system->addAttribute('version', $headInfo['shopVersion'] . '_' . $headInfo['moduleVersion']);
         
-        if ($this->_getOperation() == "PAYMENT_REQUEST" && rpDb::getRpDfpSId()) {
+        if ($this->_getOperation() == "PAYMENT_REQUEST") {
             $this->_setRatepayHeadCustomerDevice($headInfo);
         }
 
@@ -533,7 +533,6 @@ class rpRequestService
         $head = $this->_request->head;
 
         $customerDevice = $head->addChild('customer-device');
-        $customerDevice->addChild('device-site', $headInfo['deviceSite']);
         $customerDevice->addChild('device-token', $headInfo['deviceToken']);
 
         return $this;
