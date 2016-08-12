@@ -82,6 +82,10 @@ class ratepay_abstract
                 $this->profileId = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_PROFILE_ID_AT');
                 $this->securityCode = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_SECURITY_CODE_AT');
                 break;
+            case 'CH':
+                $this->profileId = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_PROFILE_ID_CH');
+                $this->securityCode = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_SECURITY_CODE_CH');
+                break;
             case 'DE':
                 $this->profileId = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_PROFILE_ID_DE');
                 $this->securityCode = constant('MODULE_PAYMENT_' . strtoupper($this->code) . '_SECURITY_CODE_DE');
@@ -119,7 +123,7 @@ class ratepay_abstract
             $display = null;
         }
         
-        if ($order->billing['country']['iso_code_2'] != 'DE' && $order->billing['country']['iso_code_2'] != 'AT') {
+        if ($order->billing['country']['iso_code_2'] != 'DE' && $order->billing['country']['iso_code_2'] != 'AT' && $order->billing['country']['iso_code_2'] != 'CH') {
             $display = null;
         }
         
