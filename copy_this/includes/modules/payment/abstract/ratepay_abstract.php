@@ -66,13 +66,8 @@ class ratepay_abstract
      * @var boolan
      */
     public $b2bDe = false;
-    
-    /**
-     * b2b at flag
-     * @var boolan
-     */
-    public $b2bAt = false;
-    
+
+
     public $error = array();
     
     protected function _setCredentials($country)

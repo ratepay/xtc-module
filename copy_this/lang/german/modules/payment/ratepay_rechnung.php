@@ -49,12 +49,8 @@ define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_CH_TITLE', 'Minimaler Bestellbetrag 
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_CH_DESC', 'Tragen Sie hier den minimalen Bestellbetrag f&uuml;r Kunden aus der Schweiz ein');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_CH_TITLE', 'Maximaler Bestellbetrag  CH');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_CH_DESC', 'Tragen Sie hier den maximalen Bestellbetrag f&uuml;r Kunden aus der Schweiz ein');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT_TITLE', 'Business to Business AT');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT_DESC', 'B2B verkauf in &Ouml;sterreich erlauben');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE_TITLE', 'Business to Business DE');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE_DESC', 'B2B verkauf in Deutschland erlauben');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_CH_TITLE', 'Business to Business CH');
-define('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_CH_DESC', 'B2B verkauf in der Schweiz erlauben');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE_TITLE', 'RatePAY ZGB-DSH URL DE');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE_DESC', 'Zus&auml;tzliche Gesch&auml;ftsbedingungen und Datenschutzerkl&auml;rungen DE');
 define('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT_TITLE', 'RatePAY ZGB-DSH URL AT');
