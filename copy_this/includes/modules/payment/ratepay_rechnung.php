@@ -171,12 +171,6 @@ class ratepay_rechnung extends ratepay_abstract
     public $b2bDe;
     
     /**
-     * b2b at flag
-     * @var boolan
-     */
-    public $b2bAt;
-    
-    /**
      * This constructor set's all properties for the ratepay_rechnung object
      */
     public function __construct()
@@ -184,7 +178,7 @@ class ratepay_rechnung extends ratepay_abstract
         global $order;
         
         $this->code               = 'ratepay_rechnung';
-        $this->version            = '2.2.2';
+        $this->version            = '2.2.3';
         $this->shopVersion        = str_replace(' ','',str_replace("xt:Commerce v", "", PROJECT_VERSION));
         $this->shopSystem         = 'xt:Commerce';
         $this->title              = MODULE_PAYMENT_RATEPAY_RECHNUNG_TEXT . " (" . $this->version . ")";
@@ -198,8 +192,6 @@ class ratepay_rechnung extends ratepay_abstract
         $this->minCh              = MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_CH;
         $this->maxCh              = MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_CH;
         $this->b2bDe              = (MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE == 'True') ? true : false;
-        $this->b2bAt              = (MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT == 'True') ? true : false;
-        $this->b2bCh              = (MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_CH == 'True') ? true : false;
         $this->sandbox            = (MODULE_PAYMENT_RATEPAY_RECHNUNG_SANDBOX == 'True') ? true : false;
         $this->logging            = (MODULE_PAYMENT_RATEPAY_RECHNUNG_LOGGING == 'True') ? true : false;
         $this->sort_order         = MODULE_PAYMENT_RATEPAY_RECHNUNG_SORT_ORDER;
@@ -413,8 +405,6 @@ class ratepay_rechnung extends ratepay_abstract
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_CH', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_CH', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE', 'True', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT', 'True', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
-        xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, set_function, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_CH', 'True', '6', '1', 'xtc_cfg_select_option(array(\'True\', \'False\'), ', now())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT', '', '6', '3', NOW())");
         xtc_db_query("INSERT INTO " . TABLE_CONFIGURATION . " (configuration_key, configuration_value, configuration_group_id, sort_order, date_added) VALUES ('MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_CH', '', '6', '3', NOW())");
@@ -457,8 +447,6 @@ class ratepay_rechnung extends ratepay_abstract
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_MIN_CH',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_MAX_CH',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_DE',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_AT',
-            'MODULE_PAYMENT_RATEPAY_RECHNUNG_B2B_CH',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_DE',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_AT',
             'MODULE_PAYMENT_RATEPAY_RECHNUNG_RATEPAY_PRIVACY_URL_CH',

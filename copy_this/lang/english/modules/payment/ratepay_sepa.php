@@ -41,8 +41,6 @@ define('MODULE_PAYMENT_RATEPAY_SEPA_MIN_AT_TITLE', 'Minimaler Bestellbetrag AT')
 define('MODULE_PAYMENT_RATEPAY_SEPA_MIN_AT_DESC', 'Tragen Sie hier den minimalen Bestellbetrag f&uuml;r Kunden aus &Ouml;sterreich ein');
 define('MODULE_PAYMENT_RATEPAY_SEPA_MAX_AT_TITLE', 'Maximaler Bestellbetrag  AT');
 define('MODULE_PAYMENT_RATEPAY_SEPA_MAX_AT_DESC', 'Tragen Sie hier den maximalen Bestellbetrag f&uuml;r Kunden aus &Ouml;sterreich ein');
-define('MODULE_PAYMENT_RATEPAY_SEPA_B2B_AT_TITLE', 'Business to Business AT');
-define('MODULE_PAYMENT_RATEPAY_SEPA_B2B_AT_DESC', 'B2B verkauf in &Ouml;sterreich erlauben');
 define('MODULE_PAYMENT_RATEPAY_SEPA_B2B_DE_TITLE', 'Business to Business DE');
 define('MODULE_PAYMENT_RATEPAY_SEPA_B2B_DE_DESC', 'B2B verkauf in Deutschland erlauben');
 define('MODULE_PAYMENT_RATEPAY_SEPA_RATEPAY_PRIVACY_URL_DE_TITLE', 'RatePAY ZGB-DSH URL DE');

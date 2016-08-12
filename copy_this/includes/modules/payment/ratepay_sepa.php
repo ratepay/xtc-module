@@ -172,19 +172,13 @@ class ratepay_sepa extends ratepay_abstract
     public $b2bDe;
     
     /**
-     * b2b at flag
-     * @var boolan
-     */
-    public $b2bAt;
-    
-    /**
      * This constructor set's all properties for the ratepay_rechnung object
      */
     public function __construct()
     {
         global $order;
         $this->code = 'ratepay_sepa';
-        $this->version = '2.2.2';
+        $this->version = '2.2.3';
         $this->shopVersion = str_replace(' ', '', str_replace("xt:Commerce v", "", PROJECT_VERSION));
         $this->shopSystem = 'xt:Commerce';
         $this->title = MODULE_PAYMENT_RATEPAY_SEPA_TEXT . " (" . $this->version . ")";
@@ -196,7 +190,6 @@ class ratepay_sepa extends ratepay_abstract
         $this->minAt = MODULE_PAYMENT_RATEPAY_SEPA_MIN_AT;
         $this->maxAt = MODULE_PAYMENT_RATEPAY_SEPA_MAX_AT;
         $this->b2bDe = (MODULE_PAYMENT_RATEPAY_SEPA_B2B_DE == 'True') ? true : false;
-        $this->b2bAt = (MODULE_PAYMENT_RATEPAY_SEPA_B2B_AT == 'True') ? true : false;
         $this->sandbox = (MODULE_PAYMENT_RATEPAY_SEPA_SANDBOX == 'True') ? true : false;
         $this->logging = (MODULE_PAYMENT_RATEPAY_SEPA_LOGGING == 'True') ? true : false;
         $this->sort_order = MODULE_PAYMENT_RATEPAY_SEPA_SORT_ORDER;
