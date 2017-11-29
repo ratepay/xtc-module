@@ -91,11 +91,11 @@ define('MODULE_PAYMENT_RATEPAY_SNIPPET_ID_TITLE', 'device Ident SId');
 // Config text and description end
 // Ratepay Info
 
-define('RATEPAY_SEPA_DATA_1', 'RatePAY GmbH, Schl&uuml;terstr. 39, 10629 Berlin');
+define('RATEPAY_SEPA_DATA_1', 'RatePAY GmbH, Franklinstra&uuml;e 28-29, 10587 Berlin');
 define('RATEPAY_SEPA_DATA_2', 'Gl&auml;ubiger-ID: DE39RPY00000568463');
 define('RATEPAY_SEPA_DATA_3', 'Mandatsreferenz: (wird nach Kaufabschluss &uuml;bermittelt)');
 
-define('RATEPAY_SEPA_INFO_1', 'Ich willige hiermit in die Weiterleitung meiner Daten an RatePAY GmbH, Schl&uuml;terstr. 39, 10629 Berlin gem&auml;&szlig;');
+define('RATEPAY_SEPA_INFO_1', 'Ich willige hiermit in die Weiterleitung meiner Daten an RatePAY GmbH, Franklinstra&uuml;e 28-29, 10587 Berlin gem&auml;&szlig;');
 define('RATEPAY_SEPA_INFO_2', 'RatePAY-Datenschutzerkl&auml;rung');
 define('RATEPAY_SEPA_INFO_3', ' ein und erm&auml;chtige diese, mit diesem Kaufvertrag in Zusammenhang stehende Zahlungen von meinem o.a. Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die von RatePAY GmbH auf mein Konto gezogenen Lastschriften einzul&ouml;sen.');
 define('RATEPAY_SEPA_INFO_4', 'Hinweis: ');
