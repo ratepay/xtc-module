@@ -6,12 +6,15 @@ RatePAY GmbH - XTCommerce Payment Module
 |Author | `Aarne Welschlau`
 |Prefix | `pi`
 |Shop Version | `XT:Commerce` `XT:Commerce modified` `<= 3.0.4SP2.1`
-|Version | `2.2.3`
+|Version | `2.2.3.1`
 |Link | http://www.ratepay.com
 |Mail | integration@ratepay.com
 |Installation | `see separate installation manual`
 
 ## RatePAY xt:Commerce
+
+### Version 2.2.3.1 - Released 2017-11-29
+ * change company address
 
 ### Version 2.2.3 - Released 2016-08-15
  * CH embedded
