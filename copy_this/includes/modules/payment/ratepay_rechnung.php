@@ -244,6 +244,12 @@ class ratepay_rechnung extends ratepay_abstract
                 $smarty->assign('RATEPAY_DFP_SNIPPET_ID', rpDb::getRpDfpSId());
             }
             /* END OF DEVICE FINGERPRINT CODE */
+
+            $smarty->assign('ratepayPrivacyUrl', $privacy);
+            $smarty->assign('RATEPAY_INFO_01', RATEPAY_RECHNUNG_INFO_1);
+            $smarty->assign('RATEPAY_INFO_02', RATEPAY_RECHNUNG_INFO_2);
+            $smarty->assign('RATEPAY_INFO_03', RATEPAY_RECHNUNG_INFO_3);
+
             //CS Aenderung des Value von $display['module'] fuer die Ausgabe
             $display['module'] =  $this->public_title;
             $display['fields'][] = array('title' => '', 'field' => $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_rechnung.html'));

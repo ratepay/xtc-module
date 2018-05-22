@@ -100,9 +100,9 @@ define('MODULE_PAYMENT_RATEPAY_RECHNUNG_ORDER_STATUS_ID_DESC', 'Bestellungen, we
 define('MODULE_PAYMENT_RATEPAY_SNIPPET_ID_TITLE', 'device Ident SId');
 // Config text and description end
 // Ratepay Info
-define('RATEPAY_RECHNUNG_INFO_1', 'Hiermit stimme ich der Verwendung meiner Daten gem&auml;&szlig; der ');
-define('RATEPAY_RECHNUNG_INFO_2', 'RatePAY-Datenschutzerkl&auml;rung');
-define('RATEPAY_RECHNUNG_INFO_3', ' zu und bin insbesondere damit einverstanden, zum Zwecke der Durchf&uuml;hrung des Vertrages &uuml;ber die von mir angegebene E-Mail-Adresse kontaktiert zu werden.');
+define('RATEPAY_RECHNUNG_INFO_1', 'Es gelten die');
+define('RATEPAY_RECHNUNG_INFO_2', 'zus&auml;tzliche Gesch&auml;ftsbedingungen und der Datenschutzhinweis ');
+define('RATEPAY_RECHNUNG_INFO_3', ' der RatePAY GmbH');
 // Ratepay info end
 // Checkout
 define('RATEPAY_RECHNUNG_VIEW_PAYMENT_BIRTHDATE_FORMAT', '(tt.mm.jjjj)');

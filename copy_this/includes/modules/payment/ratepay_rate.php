@@ -248,9 +248,13 @@ class ratepay_rate extends ratepay_abstract
             }
             /* END OF DEVICE FINGERPRINT CODE */
 
+            $smarty->assign('ratepayPrivacyUrl', $privacy);
+            $smarty->assign('RATEPAY_INFO_01', RATEPAY_RATE_INFO_1);
+            $smarty->assign('RATEPAY_INFO_02', RATEPAY_RATE_INFO_2);
+            $smarty->assign('RATEPAY_INFO_03', RATEPAY_RATE_INFO_3);
+
 			//CS Aenderung des Value von $display['module'] fuer die Ausgabe
-			$display['module'] =  $this->public_title; 
-			
+			$display['module'] =  $this->public_title;
             $display['fields'][] = array('title' => '', 'field' => $smarty->fetch(CURRENT_TEMPLATE . '/module/ratepay_rate.html'));
 			
         }

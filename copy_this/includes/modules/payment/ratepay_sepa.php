@@ -238,6 +238,10 @@ class ratepay_sepa extends ratepay_abstract
             $smarty = new Smarty();
             $smarty->assign('ratepayPrivacyUrl', $privacy);
 
+            $smarty->assign('RATEPAY_INFO_01', RATEPAY_SEPA_INFO_01);
+            $smarty->assign('RATEPAY_INFO_02', RATEPAY_SEPA_INFO_02);
+            $smarty->assign('RATEPAY_INFO_03', RATEPAY_SEPA_INFO_03);
+
             $smarty->assign('RATEPAY_DATA_1', RATEPAY_SEPA_DATA_1);
             $smarty->assign('RATEPAY_DATA_2', RATEPAY_SEPA_DATA_2);
             $smarty->assign('RATEPAY_DATA_3', RATEPAY_SEPA_DATA_3);
